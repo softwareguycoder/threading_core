@@ -41,7 +41,7 @@
             			
             <storageModule moduleId="cdtBuildSystem" version="4.0.0">
                 				
-                <configuration artifactExtension="so" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.so.debug.1716404226" name="Debug" optionalBuildProperties="org.eclipse.cdt.docker.launcher.containerbuild.property.volumes=,org.eclipse.cdt.docker.launcher.containerbuild.property.selectedvolumes=" parent="cdt.managedbuild.config.gnu.so.debug" postbuildStep="cp ${BuildArtifactFilePrefix}${BuildArtifactFileName} &quot;/home/bhart/lib/Debug&quot;;">
+                <configuration artifactExtension="so" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.so.debug.1716404226" name="Debug" optionalBuildProperties="org.eclipse.cdt.docker.launcher.containerbuild.property.selectedvolumes=,org.eclipse.cdt.docker.launcher.containerbuild.property.volumes=" parent="cdt.managedbuild.config.gnu.so.debug" postbuildStep="cp ${BuildArtifactFilePrefix}${BuildArtifactFileName} &quot;/home/bhart/lib/Debug&quot;;">
                     					
                     <folderInfo id="cdt.managedbuild.config.gnu.so.debug.1716404226." name="/" resourcePath="">
                         						
@@ -75,6 +75,10 @@
                                     								
                                 </option>
                                 								
+                                <option id="gnu.c.compiler.option.misc.pic.1526969592" superClass="gnu.c.compiler.option.misc.pic" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+                                								
+                                <option id="gnu.c.compiler.option.pthread.1539689631" superClass="gnu.c.compiler.option.pthread" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+                                								
                                 <inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.919321265" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
                                 							
                             </tool>
@@ -89,9 +93,11 @@
                                     								
                                 </option>
                                 								
-                                <option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.link.option.libs.600305357" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
+                                <option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.link.option.libs.600305357" name="Libraries (-l)" superClass="gnu.c.link.option.libs" useByScannerDiscovery="false" valueType="libs">
                                     									
-                                    <listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="debug_core"/>
+                                    <listOptionValue builtIn="false" value="debug_core"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="pthread"/>
                                     								
                                 </option>
                                 								
