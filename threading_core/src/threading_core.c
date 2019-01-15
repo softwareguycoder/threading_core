@@ -74,6 +74,8 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 
 	log_info("CreateThread: A valid thread procedure address has been passed.");
 
+	// TODO: Add code here to allocate memory for, and create, a new thread.
+
 	return INVALID_HANDLE_VALUE;
 }
 
