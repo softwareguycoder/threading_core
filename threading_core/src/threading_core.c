@@ -54,7 +54,7 @@ void _FreeThread(HTHREAD hThread) {
  * @brief Creates a thread to execute within the virtual address space of the calling process.
  * @param lpfnThreadProc A pointer to the application-defined function to be executed by the thread.
  * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error occurred.
- * @remarks The thread thusly created with this function is suspended until RunThread is called.
+ * @remarks The thread thusly created with this function is suspended until BeginThread is called.
  */
 HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 	log_info("In CreateThread");
