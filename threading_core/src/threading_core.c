@@ -74,8 +74,27 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 
 	log_info("CreateThread: A valid thread procedure address has been passed.");
 
-	// TODO: Add code here to allocate memory for, and create, a new thread.
+	log_info("CreateThread: Attempting to allocate memory for a new thread.");
 
-	return INVALID_HANDLE_VALUE;
+	pthread_t* pNewThread = (pthread_t*)malloc(sizeof(pthread_t));
+	if (NULL == pNewThread){
+		// Failed to allocate memory for a new thread.
+		log_error(
+				"CreateThread: Failed to allocate memory for a new thread handle.");
+
+		log_info(
+				"CreateThread: Done.");
+
+		return INVALID_HANDLE_VALUE;
+	}
+
+	// If we are here, then the memory allocation succeeded.
+
+	/* NOTE: A pthread_t* and HTHREAD type are interchangeable */
+	log_info("CreateThread: %d B of memory allocated.", sizeof(pthread_t));
+
+	// TODO: Add code here to initialize the new thread handle and map the thread proc to it.
+
+	return (HTHREAD)pNewThread;
 }
 
