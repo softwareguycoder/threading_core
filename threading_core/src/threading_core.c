@@ -58,6 +58,9 @@ void _FreeThread(HTHREAD hThread) {
 HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 	log_info("In CreateThread");
 
+	/* NOTE: We can't have a thread without a thread procedure function!  If nothing has been passed
+	 * for the lpfnThreadProc parameter then that is a fatal error. */
+
 	log_info(
 			"CreateThread: Checking whether a valid thread procedure address has been passed.");
 
