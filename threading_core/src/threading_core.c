@@ -118,16 +118,42 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
  * @remarks Blocks the calling process until the thread specified by hThread terminates; if the thread
  * has already terminated when this function is called, then WaitThread returns immediately.
  */
-void WaitThread(HTHREAD hThread)
-{
+void WaitThread(HTHREAD hThread) {
+
+	log_info("In WaitThread");
+
 	if (INVALID_HANDLE_VALUE == hThread) {
+		log_error(
+				"WaitThread: The thread handle passed to this function has an invalid value.");
+
+		log_info("WaitThread: Done.");
+
 		return;
 	}
 
 	int nResult = pthread_join(hThread, NULL);
 	if (OK != nResult) {
+		log_error("WaitThread: Failed to join thread %lu. %s", hThread,
+				strerror(nResult));
+
+		log_info("WaitThread: Done.");
+
 		return;
 	}
+
+	// Once we get here, the thread handle is completely useless, so
+	// free the memory assocaited with it and invalidate the thread
+	// handle.  This is necessary because thread handles are allocated
+	// on the heap.
+
+	log_info(
+			"WaitThread: The thread with handle %lu has terminated.  Deallocating the memory occupied by it...");
+
+	_FreeThread(hThread);
+
+	log_info("WaitThread: The terminated thread has been deallocated.");
+
+	log_info("WaitThread: Done.");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
