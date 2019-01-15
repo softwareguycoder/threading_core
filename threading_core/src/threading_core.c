@@ -52,8 +52,9 @@ void _FreeThread(HTHREAD hThread) {
 
 /**
  * @brief Creates a thread to execute within the virtual address space of the calling process.
- * @param lpfnThreadProc A pointer to the application-defined function to be executed by the thread. This pointer represents the starting address of the thread.
+ * @param lpfnThreadProc A pointer to the application-defined function to be executed by the thread.
  * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error occurred.
+ * @remarks The thread thusly created with this function is suspended until RunThread is called.
  */
 HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 	log_info("In CreateThread");
@@ -90,7 +91,19 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 	/* NOTE: A pthread_t* and HTHREAD type are interchangeable */
 	log_info("CreateThread: %d B of memory allocated.", sizeof(pthread_t));
 
-	// TODO: Add code here to initialize the new thread.
+	int nResult = pthread_create(pNewThread, NULL, lpfnThreadProc, NULL);
+	if (OK != nResult) {
+		log_error("CreateThread: Failed to create thread. %s",
+				strerror(nResult));
+
+		log_info("CreateThread: Done.");
+
+		return INVALID_HANDLE_VALUE;
+	}
+
+	log_info("CreateThread: New thread successfully created and initialized.")
+
+	log_info("CreateThread: Done.");
 
 	return (HTHREAD) pNewThread;
 }
