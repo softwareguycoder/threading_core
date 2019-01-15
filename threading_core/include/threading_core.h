@@ -57,6 +57,6 @@ void WaitThread(HTHREAD hThread);
  * @remarks Blocks the calling process until the thread specified by hThread terminates; if the thread
  * has already terminated when this function is called, then WaitThread returns immediately.
  */
-void WaitThread(HTHREAD hThread, void** ppRetVal);
+void WaitThreadEx(HTHREAD hThread, void** ppRetVal);
 
 #endif //__THREADING_CORE_H__
