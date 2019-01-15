@@ -61,7 +61,7 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 	log_info(
 			"CreateThread: Checking whether a valid thread procedure address has been passed.");
 
-	if (lpfnThreadProc == NULL) {
+	if (NULL == lpfnThreadProc) {
 		log_error(
 				"CreateThread: Null reference supplied for 'lpfnThreadProc' parameter.  This parameter is required.");
 
