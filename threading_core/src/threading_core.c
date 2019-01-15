@@ -1,4 +1,3 @@
-
 #include "stdafx.h"
 
 #include "threading_core.h"
@@ -16,7 +15,8 @@
 void _FreeThread(HTHREAD hThread) {
 	log_info("In _FreeThread");
 
-	log_info("_FreeThread: Checking whether the thread handle passed is valid...");
+	log_info(
+			"_FreeThread: Checking whether the thread handle passed is valid...");
 
 	if (INVALID_HANDLE_VALUE == hThread) {
 		log_warning(
@@ -40,7 +40,40 @@ void _FreeThread(HTHREAD hThread) {
 	pThread = NULL;
 	hThread = INVALID_HANDLE_VALUE;
 
-	log_info("_FreeThread: The memory occupied by the thread handle passed has been freed.");
+	log_info(
+			"_FreeThread: The memory occupied by the thread handle passed has been freed.");
 
 	log_info("_FreeThread: Done.");
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// CreateThread: Requests the operating system to create a new thread in the
+// current process.  If successful, returns a handle to the new thread.
+
+/**
+ * @brief Creates a new thread and returns a handle to it, or returns INVALID_HANDLE_VALUE if the
+ * operating system was unable to create a new thread.
+ * @param lpfnThreadProc Address of a function that will serve as the thread procedure.
+ * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error occurred.
+ */
+HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
+	log_info("In CreateThread");
+
+	log_info(
+			"CreateThread: Checking whether a valid thread procedure address has been passed.");
+
+	if (lpfnThreadProc == NULL){
+		log_error(
+				"CreateThread: Null reference supplied for 'lpfnThreadProc' parameter.  This parameter is required.");
+
+		log_info(
+				"CreateThread: Done.");
+
+		return INVALID_HANDLE_VALUE;
+	}
+
+	log_info("CreateThread: A valid thread procedure address has been passed.");
+
+	return INVALID_HANDLE_VALUE;
+}
+
