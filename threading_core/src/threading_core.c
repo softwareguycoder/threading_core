@@ -116,11 +116,15 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
  * @param hThread Handle to the thread you want to wait for.
  * @return TRUE if the thread was launched successfully; FALSE otherwise.
  * @remarks Blocks the calling process until the thread specified by hThread terminates; if the thread
- * has already terminated when this function is called, then WaitThread returns immediately.
+ * has already terminated when this function is called, then WaitThread returns immediately.  This
+ * function relies upon WaitThreadEx.
  */
 void WaitThread(HTHREAD hThread) {
 
 	log_info("In WaitThread");
+
+	log_info(
+			"WaitThread: Checking whether the thread handle passed references a valid thread...");
 
 	if (INVALID_HANDLE_VALUE == hThread) {
 		log_error(
@@ -131,15 +135,57 @@ void WaitThread(HTHREAD hThread) {
 		return;
 	}
 
-	int nResult = pthread_join(hThread, NULL);
-	if (OK != nResult) {
-		log_error("WaitThread: Failed to join thread %lu. %s", hThread,
-				strerror(nResult));
+	log_info("WaitThread: The thread handle passed has a valid value.");
 
-		log_info("WaitThread: Done.");
+	// delegate the implementation to the WaitThreadEx function by passing NULL
+	// for the user state variable.
+	WaitThreadEx(hThread, NULL);
+
+	log_info("WaitThread: Done.");
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// WaitThreadEx: Waits for a thread to terminate and also allows the calling
+// thread to have access to any user state returned from the waited-on thread.
+
+/**
+ * @brief Waits for the thread specified by hThread to terminate.
+ * @param hThread Handle to the thread you want to wait for.
+ * @param ppRetVal Address of memory that is to be filled with the user state returned by the thread procedure.
+ * @return TRUE if the thread was launched successfully; FALSE otherwise.
+ * @remarks Blocks the calling process until the thread specified by hThread terminates; if the thread
+ * has already terminated when this function is called, then WaitThread returns immediately.
+ */
+void WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
+	log_info("In WaitThreadEx");
+
+	log_info(
+			"WaitThreadEx: Checking whether the thread handle passed references a valid thread...");
+
+	if (INVALID_HANDLE_VALUE == hThread) {
+		log_error(
+				"WaitThreadEx: The thread handle passed to this function has an invalid value.");
+
+		log_info("WaitThreadEx: Done.");
 
 		return;
 	}
+
+	log_info("WaitThreadEx: The thread handle passed has a valid value.");
+
+	log_info("WaitThreadEx: Attempting to join the specified thread...");
+
+	int nResult = pthread_join(hThread, ppRetVal);
+	if (OK != nResult) {
+		log_error("WaitThreadEx: Failed to join thread %lu. %s", hThread,
+				strerror(nResult));
+
+		log_info("WaitThreadEx: Done.");
+
+		return;
+	}
+
+	log_info("WaitThreadEx: The specified thread has terminated.")
 
 	// Once we get here, the thread handle is completely useless, so
 	// free the memory assocaited with it and invalidate the thread
@@ -147,13 +193,13 @@ void WaitThread(HTHREAD hThread) {
 	// on the heap.
 
 	log_info(
-			"WaitThread: The thread with handle %lu has terminated.  Deallocating the memory occupied by it...");
+			"WaitThreadEx: The thread with handle %lu has terminated.  Deallocating the memory occupied by it...");
 
 	_FreeThread(hThread);
 
-	log_info("WaitThread: The terminated thread has been deallocated.");
+	log_info("WaitThreadEx: The terminated thread has been deallocated.");
 
-	log_info("WaitThread: Done.");
+	log_info("WaitThreadEx: Done.");
+
 }
 
-///////////////////////////////////////////////////////////////////////////////
