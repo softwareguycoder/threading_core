@@ -51,9 +51,8 @@ void _FreeThread(HTHREAD hThread) {
 // current process.  If successful, returns a handle to the new thread.
 
 /**
- * @brief Creates a new thread and returns a handle to it, or returns INVALID_HANDLE_VALUE if the
- * operating system was unable to create a new thread.
- * @param lpfnThreadProc Address of a function that will serve as the thread procedure.
+ * @brief Creates a thread to execute within the virtual address space of the calling process.
+ * @param lpfnThreadProc A pointer to the application-defined function to be executed by the thread. This pointer represents the starting address of the thread.
  * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error occurred.
  */
 HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
@@ -62,12 +61,11 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 	log_info(
 			"CreateThread: Checking whether a valid thread procedure address has been passed.");
 
-	if (lpfnThreadProc == NULL){
+	if (lpfnThreadProc == NULL) {
 		log_error(
 				"CreateThread: Null reference supplied for 'lpfnThreadProc' parameter.  This parameter is required.");
 
-		log_info(
-				"CreateThread: Done.");
+		log_info("CreateThread: Done.");
 
 		return INVALID_HANDLE_VALUE;
 	}
@@ -76,14 +74,13 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 
 	log_info("CreateThread: Attempting to allocate memory for a new thread.");
 
-	pthread_t* pNewThread = (pthread_t*)malloc(sizeof(pthread_t));
-	if (NULL == pNewThread){
+	pthread_t* pNewThread = (pthread_t*) malloc(sizeof(pthread_t));
+	if (NULL == pNewThread) {
 		// Failed to allocate memory for a new thread.
 		log_error(
 				"CreateThread: Failed to allocate memory for a new thread handle.");
 
-		log_info(
-				"CreateThread: Done.");
+		log_info("CreateThread: Done.");
 
 		return INVALID_HANDLE_VALUE;
 	}
@@ -93,8 +90,8 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 	/* NOTE: A pthread_t* and HTHREAD type are interchangeable */
 	log_info("CreateThread: %d B of memory allocated.", sizeof(pthread_t));
 
-	// TODO: Add code here to initialize the new thread handle and map the thread proc to it.
+	// TODO: Add code here to initialize the new thread.
 
-	return (HTHREAD)pNewThread;
+	return (HTHREAD) pNewThread;
 }
 
