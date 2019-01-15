@@ -5,6 +5,13 @@
 #include <pthread.h>
 
 /**
+ * @brief Standardized value for a handle.
+ */
+#ifndef INVALID_HANDLE_VALUE
+#define INVALID_HANDLE_VALUE NULL
+#endif //INVALID_HANDLE_VALUE
+
+/**
  * @brief Handle to a process thread.
  */
 typedef pthread_t* HTHREAD;
@@ -15,10 +22,6 @@ typedef pthread_t* HTHREAD;
  * @returns Reference to a block of memory containing user state.  May be NULL.
  */
 typedef void* (*LPTHREAD_START_ROUTINE)(void* lpThreadParameter);
-
-#ifndef INVALID_HANDLE_VALUE
-#define INVALID_HANDLE_VALUE NULL
-#endif //INVALID_HANDLE_VALUE
 
 /**
  * @brief Creates a new thread and returns a handle to it, or returns INVALID_HANDLE_VALUE if the
