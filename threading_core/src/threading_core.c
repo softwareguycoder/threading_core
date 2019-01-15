@@ -54,7 +54,6 @@ void _FreeThread(HTHREAD hThread) {
  * @brief Creates a thread to execute within the virtual address space of the calling process.
  * @param lpfnThreadProc A pointer to the application-defined function to be executed by the thread.
  * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error occurred.
- * @remarks The thread thusly created with this function is suspended until BeginThread is called.
  */
 HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 	log_info("In CreateThread");
@@ -101,10 +100,34 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 		return INVALID_HANDLE_VALUE;
 	}
 
-	log_info("CreateThread: New thread successfully created and initialized.")
+	log_info("CreateThread: New thread successfully created and initialized.");
 
 	log_info("CreateThread: Done.");
 
 	return (HTHREAD) pNewThread;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// WaitThread: Blocks the calling thread until the specified thread terminates.
+// Does not recover any user state returned by the thread waited upon.
+
+/**
+ * @brief Waits for the thread specified by hThread to terminate.
+ * @param hThread Handle to the thread you want to wait for.
+ * @return TRUE if the thread was launched successfully; FALSE otherwise.
+ * @remarks Blocks the calling process until the thread specified by hThread terminates; if the thread
+ * has already terminated when this function is called, then WaitThread returns immediately.
+ */
+void WaitThread(HTHREAD hThread)
+{
+	if (INVALID_HANDLE_VALUE == hThread) {
+		return;
+	}
+
+	int nResult = pthread_join(hThread, NULL);
+	if (OK != nResult) {
+		return;
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
