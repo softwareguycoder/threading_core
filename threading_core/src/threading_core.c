@@ -119,9 +119,9 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
  * @brief Waits for the thread specified by hThread to terminate.
  * @param hThread Handle to the thread you want to wait for.
  * @return TRUE if the thread was launched successfully; FALSE otherwise.
- * @remarks Blocks the calling thread until the thread specified by hThread terminates; if the thread
- * has already terminated when this function is called, then WaitThread returns immediately.  This
- * function relies upon WaitThreadEx.
+ * @remarks Blocks the calling thread until the thread specified by hThread
+ * terminates; if the thread has already terminated when this function is called,
+ * then WaitThread returns immediately.  This function relies upon WaitThreadEx.
  */
 void WaitThread(HTHREAD hThread) {
 	// delegate the implementation to the WaitThreadEx function by passing NULL
