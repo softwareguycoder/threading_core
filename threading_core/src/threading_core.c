@@ -217,5 +217,4 @@ int DestroyThread(HTHREAD hThread) {
 
 	return OK;
 }
-}
 
