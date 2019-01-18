@@ -171,8 +171,8 @@ int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 
 	int nResult = pthread_join((pthread_t*) hThread, ppRetVal);
 	if (OK != nResult) {
-		log_error("WaitThreadEx: Failed to join thread at address %x. %s", hThread,
-				strerror(nResult));
+		log_error("WaitThreadEx: Failed to join thread at address %x. %s",
+				hThread, strerror(nResult));
 
 		log_info("WaitThreadEx: Result = %d", nResult);
 
@@ -201,5 +201,21 @@ int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 
 	return nResult;
 
+}
+
+int DestroyThread(HTHREAD hThread) {
+	if (INVALID_HANDLE_VALUE == hThread) {
+		return OK; /* Nothing to do if thread handle is already an invalid value */
+	}
+
+	_FreeThread(hThread);
+
+	/* Even though we explicitly called _FreeThread above, let's explicitly set the
+	 * thread handle to INVALID_HANDLE_VALUE just to be on the safe side.
+	 */
+	hThread = INVALID_HANDLE_VALUE;
+
+	return OK;
+}
 }
 
