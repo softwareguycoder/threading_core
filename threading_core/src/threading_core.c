@@ -58,7 +58,7 @@ void _FreeThread(HTHREAD hThread) {
  * This function is an alias for CreateThreadEx with NULL passed for the second argument.
  */
 HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
-	return CreateThreadEx(lpfnThreadProc, NULL /*pUserState*/);
+	return CreateThreadEx(lpfnThreadProc, NULL /* pUserState */);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -74,8 +74,8 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
  * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error occurred.
  * @remarks The thread procedure begins execution immediately when this function is called.
  */
-HTHREAD CreateThreadEx(LPTHREAD_START_ROUTINE lpfnThreadProc, void* __restrict pUserState)
-{
+HTHREAD CreateThreadEx(LPTHREAD_START_ROUTINE lpfnThreadProc,
+		void* __restrict pUserState) {
 	log_info("In CreateThreadEx");
 
 	/* NOTE: We can't have a thread without a thread procedure function!  If nothing has been passed
@@ -93,7 +93,8 @@ HTHREAD CreateThreadEx(LPTHREAD_START_ROUTINE lpfnThreadProc, void* __restrict p
 		return INVALID_HANDLE_VALUE;
 	}
 
-	log_info("CreateThreadEx: A valid thread procedure address has been passed.");
+	log_info(
+			"CreateThreadEx: A valid thread procedure address has been passed.");
 
 	log_info("CreateThreadEx: Attempting to allocate memory for a new thread.");
 
@@ -123,7 +124,8 @@ HTHREAD CreateThreadEx(LPTHREAD_START_ROUTINE lpfnThreadProc, void* __restrict p
 		return INVALID_HANDLE_VALUE;
 	}
 
-	log_info("CreateThreadEx: New thread successfully created and initialized.");
+	log_info(
+			"CreateThreadEx: New thread successfully created and initialized.");
 
 	log_info("CreateThreadEx: Done.");
 
@@ -183,10 +185,10 @@ int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 
 	log_info("WaitThreadEx: The thread handle passed has a valid value.");
 
-	pthread_t *pThread = (pthread_t*)hThread;
+	pthread_t *pThread = (pthread_t*) hThread;
 
 	// pthread_join wants us to dereference the HTHREAD
-	if (pThread == NULL){
+	if (pThread == NULL) {
 		log_error(
 				"WaitThreadEx: The thread handle passed to this function has an invalid value.");
 
@@ -250,10 +252,12 @@ int DestroyThread(HTHREAD hThread) {
 
 	int nResult = OK;
 
-	log_info("DestroyThread: Checking whether the handle passed to us has already been invalidated...");
+	log_info(
+			"DestroyThread: Checking whether the handle passed to us has already been invalidated...");
 
 	if (INVALID_HANDLE_VALUE == hThread) {
-		log_warning("DestroyThread: The thread handle passed to us has already been invalidated.  Nothing more to do.");
+		log_warning(
+				"DestroyThread: The thread handle passed to us has already been invalidated.  Nothing more to do.");
 
 		log_info("DestroyThread: Result = %d", nResult);
 
@@ -262,22 +266,26 @@ int DestroyThread(HTHREAD hThread) {
 		return nResult; /* Nothing to do if thread handle is already an invalid value */
 	}
 
-	log_info("DestroyThread: The thread handle passed to us has not been invalidated yet.");
+	log_info(
+			"DestroyThread: The thread handle passed to us has not been invalidated yet.");
 
-	log_info("DestroyThread: Calling _FreeThread to release the system resources used by the thread...");
+	log_info(
+			"DestroyThread: Calling _FreeThread to release the system resources used by the thread...");
 
 	_FreeThread(hThread);
 
 	log_info("DestroyThread: Finished calling _FreeThread.");
 
-	log_info("DestroyThread: Setting the thread handle to an invalid value to guarantee it is released...");
+	log_info(
+			"DestroyThread: Setting the thread handle to an invalid value to guarantee it is released...");
 
 	/* Even though we explicitly called _FreeThread above, let's explicitly set the
 	 * thread handle to INVALID_HANDLE_VALUE just to be on the safe side.
 	 */
 	hThread = INVALID_HANDLE_VALUE;
 
-	log_info("DestroyThread: The thread handle passed to us has been invalidated.");
+	log_info(
+			"DestroyThread: The thread handle passed to us has been invalidated.");
 
 	log_info("DestroyThread: Result = %d", nResult);
 
