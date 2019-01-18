@@ -63,6 +63,9 @@ int WaitThreadEx(HTHREAD hThread, void** ppRetVal);
  * @brief Destroys (deallocates) a thread handle and releases its resources to the operating system.
  * @param hThread Handle to the thread you want to get rid of.
  * @return System error code.  Zero if successful.
+ * @remarks Only call this function if you want a guarantee that the thread will be destroyed.
+ * Nominally, WaitThreadEx also releases threads once it has finished waiting for them to
+ * terminate.
  */
 int DestroyThread(HTHREAD hThread);
 
