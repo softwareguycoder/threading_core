@@ -228,17 +228,43 @@ int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
  * terminate.
  */
 int DestroyThread(HTHREAD hThread) {
+	log_info("In DestroyThread");
+
+	int nResult = OK;
+
+	log_info("DestroyThread: Checking whether the handle passed to us has already been invalidated...");
+
 	if (INVALID_HANDLE_VALUE == hThread) {
-		return OK; /* Nothing to do if thread handle is already an invalid value */
+		log_warning("DestroyThread: The thread handle passed to us has already been invalidated.  Nothing more to do.");
+
+		log_info("DestroyThread: Result = %d", nResult);
+
+		log_info("DestroyThread: Done.");
+
+		return nResult; /* Nothing to do if thread handle is already an invalid value */
 	}
 
+	log_info("DestroyThread: The thread handle passed to us has not been invalidated yet.");
+
+	log_info("DestroyThread: Calling _FreeThread to release the system resources used by the thread...");
+
 	_FreeThread(hThread);
+
+	log_info("DestroyThread: Finished calling _FreeThread.");
+
+	log_info("DestroyThread: Setting the thread handle to an invalid value to guarantee it is released...");
 
 	/* Even though we explicitly called _FreeThread above, let's explicitly set the
 	 * thread handle to INVALID_HANDLE_VALUE just to be on the safe side.
 	 */
 	hThread = INVALID_HANDLE_VALUE;
 
-	return OK;
+	log_info("DestroyThread: The thread handle passed to us has been invalidated.");
+
+	log_info("DestroyThread: Result = %d", nResult);
+
+	log_info("DestroyThread: Done");
+
+	return nResult;
 }
 
