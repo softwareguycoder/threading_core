@@ -47,7 +47,7 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc);
  * @remarks Blocks the calling process until the thread specified by hThread terminates; if the thread
  * has already terminated when this function is called, then WaitThread returns immediately.
  */
-void WaitThread(HTHREAD hThread);
+int WaitThread(HTHREAD hThread);
 
 /**
  * @brief Waits for the thread specified by hThread to terminate.
@@ -57,6 +57,6 @@ void WaitThread(HTHREAD hThread);
  * @remarks Blocks the calling process until the thread specified by hThread terminates; if the thread
  * has already terminated when this function is called, then WaitThread returns immediately.
  */
-void WaitThreadEx(HTHREAD hThread, void** ppRetVal);
+int WaitThreadEx(HTHREAD hThread, void** ppRetVal);
 
 #endif //__THREADING_CORE_H__
