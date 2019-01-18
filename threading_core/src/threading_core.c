@@ -165,11 +165,25 @@ int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 
 	log_info("WaitThreadEx: The thread handle passed has a valid value.");
 
+	pthread_t *pThread = (pthread_t*)hThread;
+
+	// pthread_join wants us to dereference the HTHREAD
+	if (pThread == NULL){
+		log_error(
+				"WaitThreadEx: The thread handle passed to this function has an invalid value.");
+
+		log_info("WaitThreadEx: Result = %d", nResult);
+
+		log_info("WaitThreadEx: Done.");
+
+		return nResult;
+	}
+
+	pthread_t nThreadID = *pThread;
+
 	log_info("WaitThreadEx: Attempting to join the specified thread...");
 
-	// NOTE: Because of its definition, HTHREAD is directly castable to pthread_t*
-
-	int nResult = pthread_join((pthread_t*) hThread, ppRetVal);
+	nResult = pthread_join(nThreadID, ppRetVal);
 	if (OK != nResult) {
 		log_error("WaitThreadEx: Failed to join thread at address %x. %s",
 				hThread, strerror(nResult));
@@ -189,7 +203,9 @@ int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 	// on the heap.
 
 	log_info(
-			"WaitThreadEx: The thread with handle %lu has terminated.  Deallocating the memory occupied by it...");
+			"WaitThreadEx: The thread with handle at the memory address %0x has terminated.");
+
+	log_info("WaitThreadEx: Deallocating the memory occupied by it...");
 
 	_FreeThread(hThread);
 
@@ -203,6 +219,14 @@ int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 
 }
 
+/**
+ * @brief Destroys (deallocates) a thread handle and releases its resources to the operating system.
+ * @param hThread Handle to the thread you want to get rid of.
+ * @return System error code.  Zero if successful.
+ * @remarks Only call this function if you want a guarantee that the thread will be destroyed.
+ * Nominally, WaitThreadEx also releases threads once it has finished waiting for them to
+ * terminate.
+ */
 int DestroyThread(HTHREAD hThread) {
 	if (INVALID_HANDLE_VALUE == hThread) {
 		return OK; /* Nothing to do if thread handle is already an invalid value */
