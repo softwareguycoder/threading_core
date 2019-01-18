@@ -119,7 +119,7 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
  * @brief Waits for the thread specified by hThread to terminate.
  * @param hThread Handle to the thread you want to wait for.
  * @return TRUE if the thread was launched successfully; FALSE otherwise.
- * @remarks Blocks the calling process until the thread specified by hThread terminates; if the thread
+ * @remarks Blocks the calling thread until the thread specified by hThread terminates; if the thread
  * has already terminated when this function is called, then WaitThread returns immediately.  This
  * function relies upon WaitThreadEx.
  */
@@ -155,10 +155,13 @@ void WaitThread(HTHREAD hThread) {
 /**
  * @brief Waits for the thread specified by hThread to terminate.
  * @param hThread Handle to the thread you want to wait for.
- * @param ppRetVal Address of memory that is to be filled with the user state returned by the thread procedure.
+ * @param ppRetVal Address of memory that is to be filled with the user state
+ * returned by the thread procedure. NULL can also be specified if you don't care
+ * to receive the returned user state.
  * @return TRUE if the thread was launched successfully; FALSE otherwise.
- * @remarks Blocks the calling process until the thread specified by hThread terminates; if the thread
- * has already terminated when this function is called, then WaitThread returns immediately.
+ * @remarks Blocks the calling thread until the thread specified by hThread terminates;
+ * if the thread has already terminated when this function is called, then WaitThread
+ * returns immediately.
  */
 void WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 	log_info("In WaitThreadEx");
@@ -179,7 +182,7 @@ void WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 
 	log_info("WaitThreadEx: Attempting to join the specified thread...");
 
-	int nResult = pthread_join((pthread_t*)hThread, ppRetVal);
+	int nResult = pthread_join((pthread_t*) hThread, ppRetVal);
 	if (OK != nResult) {
 		log_error("WaitThreadEx: Failed to join thread %lu. %s", hThread,
 				strerror(nResult));
