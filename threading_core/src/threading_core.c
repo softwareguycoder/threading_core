@@ -55,36 +55,55 @@ void _FreeThread(HTHREAD hThread) {
  * @param lpfnThreadProc (Required.) A pointer to the application-defined function to be executed by the thread.
  * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error occurred.
  * @remarks The thread function specified by lpfnThreadProc will begin execution immediately.
+ * This function is an alias for CreateThreadEx with NULL passed for the second argument.
  */
 HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
-	log_info("In CreateThread");
+	return CreateThreadEx(lpfnThreadProc, NULL /*pUserState*/);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CreateThread: Requests the operating system to create a new thread in the
+// current process.  If successful, returns a handle to the new thread.
+
+/**
+ * @brief Creates a new thread and returns a handle to it, or returns INVALID_HANDLE_VALUE if the
+ * operating system was unable to create a new thread.
+ * @param lpfnThreadProc Address of a function that will serve as the thread procedure.
+ * @param pUserState Address of a block of memory that contains user state that is to be passed
+ * as an argument to the thread procedure.  You may pass NULL for this parameter.
+ * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error occurred.
+ * @remarks The thread procedure begins execution immediately when this function is called.
+ */
+HTHREAD CreateThreadEx(LPTHREAD_START_ROUTINE lpfnThreadProc, void* __restrict pUserState)
+{
+	log_info("In CreateThreadEx");
 
 	/* NOTE: We can't have a thread without a thread procedure function!  If nothing has been passed
 	 * for the lpfnThreadProc parameter then that is a fatal error. */
 
 	log_info(
-			"CreateThread: Checking whether a valid thread procedure address has been passed.");
+			"CreateThreadEx: Checking whether a valid thread procedure address has been passed.");
 
 	if (NULL == lpfnThreadProc) {
 		log_error(
-				"CreateThread: Null reference supplied for 'lpfnThreadProc' parameter.  This parameter is required.");
+				"CreateThreadEx: Null reference supplied for 'lpfnThreadProc' parameter.  This parameter is required.");
 
-		log_info("CreateThread: Done.");
+		log_info("CreateThreadEx: Done.");
 
 		return INVALID_HANDLE_VALUE;
 	}
 
-	log_info("CreateThread: A valid thread procedure address has been passed.");
+	log_info("CreateThreadEx: A valid thread procedure address has been passed.");
 
-	log_info("CreateThread: Attempting to allocate memory for a new thread.");
+	log_info("CreateThreadEx: Attempting to allocate memory for a new thread.");
 
 	pthread_t* pNewThread = (pthread_t*) malloc(sizeof(pthread_t));
 	if (NULL == pNewThread) {
 		// Failed to allocate memory for a new thread.
 		log_error(
-				"CreateThread: Failed to allocate memory for a new thread handle.");
+				"CreateThreadEx: Failed to allocate memory for a new thread handle.");
 
-		log_info("CreateThread: Done.");
+		log_info("CreateThreadEx: Done.");
 
 		return INVALID_HANDLE_VALUE;
 	}
@@ -92,25 +111,24 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 	// If we are here, then the memory allocation succeeded.
 
 	/* NOTE: A pthread_t* and HTHREAD type are interchangeable */
-	log_info("CreateThread: %d B of memory allocated.", sizeof(pthread_t));
+	log_info("CreateThreadEx: %d B of memory allocated.", sizeof(pthread_t));
 
-	int nResult = pthread_create(pNewThread, NULL, lpfnThreadProc, NULL);
+	int nResult = pthread_create(pNewThread, NULL, lpfnThreadProc, pUserState);
 	if (OK != nResult) {
-		log_error("CreateThread: Failed to create thread. %s",
+		log_error("CreateThreadEx: Failed to create thread. %s",
 				strerror(nResult));
 
-		log_info("CreateThread: Done.");
+		log_info("CreateThreadEx: Done.");
 
 		return INVALID_HANDLE_VALUE;
 	}
 
-	log_info("CreateThread: New thread successfully created and initialized.");
+	log_info("CreateThreadEx: New thread successfully created and initialized.");
 
-	log_info("CreateThread: Done.");
+	log_info("CreateThreadEx: Done.");
 
 	return (HTHREAD) pNewThread;
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 // WaitThread: Blocks the calling thread until the specified thread terminates.
 // Does not recover any user state returned by the thread waited upon.

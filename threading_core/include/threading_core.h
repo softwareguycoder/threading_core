@@ -41,6 +41,17 @@ typedef void* (*LPTHREAD_START_ROUTINE)(void* lpThreadParameter);
 HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc);
 
 /**
+ * @brief Creates a new thread and returns a handle to it, or returns INVALID_HANDLE_VALUE if the
+ * operating system was unable to create a new thread.
+ * @param lpfnThreadProc Address of a function that will serve as the thread procedure.
+ * @param pUserState Address of a block of memory that contains user state that is to be passed
+ * as an argument to the thread procedure.
+ * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error occurred.
+ * @remarks The thread procedure begins execution immediately when this function is called.
+ */
+HTHREAD CreateThreadEx(LPTHREAD_START_ROUTINE lpfnThreadProc, void* __restrict pUserState);
+
+/**
  * @brief Waits for the thread specified by hThread to terminate.
  * @param hThread Handle to the thread you want to wait for.
  * @return TRUE if the thread was launched successfully; FALSE otherwise.
