@@ -118,15 +118,15 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 /**
  * @brief Waits for the thread specified by hThread to terminate.
  * @param hThread Handle to the thread you want to wait for.
- * @return TRUE if the thread was launched successfully; FALSE otherwise.
+ * @return Return code from the pthread_join function.
  * @remarks Blocks the calling thread until the thread specified by hThread
  * terminates; if the thread has already terminated when this function is called,
  * then WaitThread returns immediately.  This function relies upon WaitThreadEx.
  */
-void WaitThread(HTHREAD hThread) {
+int WaitThread(HTHREAD hThread) {
 	// delegate the implementation to the WaitThreadEx function by passing NULL
 	// for the user state variable.
-	WaitThreadEx(hThread, NULL);
+	return WaitThreadEx(hThread, NULL);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -144,8 +144,10 @@ void WaitThread(HTHREAD hThread) {
  * if the thread has already terminated when this function is called, then WaitThread
  * returns immediately.
  */
-void WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
+int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 	log_info("In WaitThreadEx");
+
+	int nResult = ERROR;
 
 	log_info(
 			"WaitThreadEx: Checking whether the thread handle passed references a valid thread...");
@@ -154,23 +156,29 @@ void WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 		log_error(
 				"WaitThreadEx: The thread handle passed to this function has an invalid value.");
 
+		log_info("WaitThreadEx: Result = %d", nResult);
+
 		log_info("WaitThreadEx: Done.");
 
-		return;
+		return nResult;
 	}
 
 	log_info("WaitThreadEx: The thread handle passed has a valid value.");
 
 	log_info("WaitThreadEx: Attempting to join the specified thread...");
 
+	// NOTE: Because of its definition, HTHREAD is directly castable to pthread_t*
+
 	int nResult = pthread_join((pthread_t*) hThread, ppRetVal);
 	if (OK != nResult) {
-		log_error("WaitThreadEx: Failed to join thread %lu. %s", hThread,
+		log_error("WaitThreadEx: Failed to join thread at address %x. %s", hThread,
 				strerror(nResult));
+
+		log_info("WaitThreadEx: Result = %d", nResult);
 
 		log_info("WaitThreadEx: Done.");
 
-		return;
+		return nResult;
 	}
 
 	log_info("WaitThreadEx: The specified thread has terminated.");
@@ -187,7 +195,11 @@ void WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 
 	log_info("WaitThreadEx: The terminated thread has been deallocated.");
 
+	log_info("WaitThreadEx: Result = %d", nResult);
+
 	log_info("WaitThreadEx: Done.");
+
+	return nResult;
 
 }
 
