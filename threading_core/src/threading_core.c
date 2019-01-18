@@ -124,28 +124,9 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
  * function relies upon WaitThreadEx.
  */
 void WaitThread(HTHREAD hThread) {
-
-	log_info("In WaitThread");
-
-	log_info(
-			"WaitThread: Checking whether the thread handle passed references a valid thread...");
-
-	if (INVALID_HANDLE_VALUE == hThread) {
-		log_error(
-				"WaitThread: The thread handle passed to this function has an invalid value.");
-
-		log_info("WaitThread: Done.");
-
-		return;
-	}
-
-	log_info("WaitThread: The thread handle passed has a valid value.");
-
 	// delegate the implementation to the WaitThreadEx function by passing NULL
 	// for the user state variable.
 	WaitThreadEx(hThread, NULL);
-
-	log_info("WaitThread: Done.");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
