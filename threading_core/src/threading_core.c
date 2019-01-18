@@ -178,7 +178,7 @@ void WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 
 	log_info("WaitThreadEx: Attempting to join the specified thread...");
 
-	int nResult = pthread_join(hThread, ppRetVal);
+	int nResult = pthread_join((pthread_t*)hThread, ppRetVal);
 	if (OK != nResult) {
 		log_error("WaitThreadEx: Failed to join thread %lu. %s", hThread,
 				strerror(nResult));
@@ -188,7 +188,7 @@ void WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 		return;
 	}
 
-	log_info("WaitThreadEx: The specified thread has terminated.")
+	log_info("WaitThreadEx: The specified thread has terminated.");
 
 	// Once we get here, the thread handle is completely useless, so
 	// free the memory assocaited with it and invalidate the thread
