@@ -187,27 +187,18 @@ int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 
 	pthread_t *pThread = (pthread_t*) hThread;
 
-<<<<<<< HEAD
-	int nResult = pthread_join((pthread_t*)hThread, ppRetVal);
-	if (OK != nResult) {
-		log_error("WaitThreadEx: Failed to join thread %lu. %s", hThread,
-				strerror(nResult));
-=======
 	// pthread_join wants us to dereference the HTHREAD
 	if (pThread == NULL) {
 		log_error(
 				"WaitThreadEx: The thread handle passed to this function has an invalid value.");
 
 		log_info("WaitThreadEx: Result = %d", nResult);
->>>>>>> branch 'master' of https://github.com/softwareguycoder/threading_core.git
 
 		log_info("WaitThreadEx: Done.");
 
 		return nResult;
 	}
 
-<<<<<<< HEAD
-=======
 	pthread_t nThreadID = *pThread;
 
 	log_info("WaitThreadEx: Attempting to join the specified thread...");
@@ -224,7 +215,6 @@ int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 		return nResult;
 	}
 
->>>>>>> branch 'master' of https://github.com/softwareguycoder/threading_core.git
 	log_info("WaitThreadEx: The specified thread has terminated.");
 
 	// Once we get here, the thread handle is completely useless, so
