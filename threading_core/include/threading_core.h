@@ -41,13 +41,24 @@ typedef void* (*LPTHREAD_START_ROUTINE)(void* lpThreadParameter);
 HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc);
 
 /**
+ * @brief Creates a new thread and returns a handle to it, or returns INVALID_HANDLE_VALUE if the
+ * operating system was unable to create a new thread.
+ * @param lpfnThreadProc Address of a function that will serve as the thread procedure.
+ * @param pUserState Address of a block of memory that contains user state that is to be passed
+ * as an argument to the thread procedure.
+ * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error occurred.
+ * @remarks The thread procedure begins execution immediately when this function is called.
+ */
+HTHREAD CreateThreadEx(LPTHREAD_START_ROUTINE lpfnThreadProc, void* __restrict pUserState);
+
+/**
  * @brief Waits for the thread specified by hThread to terminate.
  * @param hThread Handle to the thread you want to wait for.
  * @return TRUE if the thread was launched successfully; FALSE otherwise.
  * @remarks Blocks the calling process until the thread specified by hThread terminates; if the thread
  * has already terminated when this function is called, then WaitThread returns immediately.
  */
-void WaitThread(HTHREAD hThread);
+int WaitThread(HTHREAD hThread);
 
 /**
  * @brief Waits for the thread specified by hThread to terminate.
@@ -57,6 +68,16 @@ void WaitThread(HTHREAD hThread);
  * @remarks Blocks the calling process until the thread specified by hThread terminates; if the thread
  * has already terminated when this function is called, then WaitThread returns immediately.
  */
-void WaitThreadEx(HTHREAD hThread, void** ppRetVal);
+int WaitThreadEx(HTHREAD hThread, void** ppRetVal);
+
+/**
+ * @brief Destroys (deallocates) a thread handle and releases its resources to the operating system.
+ * @param hThread Handle to the thread you want to get rid of.
+ * @return System error code.  Zero if successful.
+ * @remarks Only call this function if you want a guarantee that the thread will be destroyed.
+ * Nominally, WaitThreadEx also releases threads once it has finished waiting for them to
+ * terminate.
+ */
+int DestroyThread(HTHREAD hThread);
 
 #endif //__THREADING_CORE_H__
