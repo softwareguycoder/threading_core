@@ -2,6 +2,51 @@
 
 #include "threading_core.h"
 
+void RegisterEventEx(int signum, LPSIGNALHANDLER lpfnEventHandler) {
+	log_debug("In RegisterEventEx");
+
+	log_info(
+			"RegisterEventEx: Checking whether lpfnEventHandler delegate is null...");
+
+	if (NULL == lpfnEventHandler) {
+		log_error(
+				"RegisterEventEx: Address of an event handler routine must be supplied.");
+
+		log_debug("RegisterEventEx: Done.");
+
+		exit(ERROR);
+	}
+
+	log_info("RegisterEventEx: Event handler address passed is valid.");
+
+	log_info("RegisterEventEx: Attempting to register the event handler...");
+
+	if (SIG_ERR == signal(signum, lpfnEventHandler)) {
+		log_error("RegisterEventEx: Failed to register event handler.");
+
+		perror("RegisterEventEx");
+
+		exit(ERROR);
+	}
+
+	log_info("RegisterEventEx: Event handler registered successfully.");
+
+	log_debug("RegisterEventEx: Done.");
+}
+
+void RegisterEvent(LPSIGNALHANDLER lpfnEventHandler) {
+	log_debug("In RegisterEvent");
+
+	log_info(
+			"RegisterEvent: Calling RegisterEventEx with SIGSEGV specified...");
+
+	RegisterEventEx(SIGSEGV, lpfnEventHandler);
+
+	log_info("RegisterEvent: Finished call to RegisterEventEx");
+
+	log_debug("RegisterEvent: Done.");
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // _FreeThread: Internal function for freeing malloc'd thread handles.  This
 // function is not exposed in the header file for this library, as it is

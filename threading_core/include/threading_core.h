@@ -32,6 +32,30 @@ typedef pthread_t* HTHREAD;
 typedef void* (*LPTHREAD_START_ROUTINE)(void* lpThreadParameter);
 
 /**
+ * @brief Pointer to a function that handles a signal.
+ * @param signum Numeric code corresponding to the signal that was sent.
+ */
+typedef void (*LPSIGNALHANDLER)(int signum);
+
+/**
+ * @brief Registers a function to be called when a signal is sent to a thread.
+ * @param signum Numeric value corresponding to the signal to which to respond.
+ * @param lpfnEventHandler Address of a function of type LPSIGNALHANDLER that should be called when the SIGSEGV signal is sent.
+ * @remarks Sets the function to be called when the signal is processed by a thread.
+ * The handler should register itself over again during the call, as the last statement.
+ */
+void RegisterEventEx(int signum, LPSIGNALHANDLER lpfnEventHandler);
+
+/**
+ * @brief Registers a function to be called when a signal is sent to a thread.
+ * @param lpfnEventHandler Address of a function of type LPSIGNALHANDLER that should be called when the SIGSEGV signal is sent.
+ * @remarks Sets the function to be called when the signal is processed by a thread.
+ * The handler should register itself over again during the call, as the last statement.
+ * This alias automatically maps the event handler to the SIGSEGV code.
+ */
+void RegisterEvent(LPSIGNALHANDLER lpfnEventHandler);
+
+/**
  * @brief Creates a new thread and returns a handle to it, or returns INVALID_HANDLE_VALUE if the
  * operating system was unable to create a new thread.
  * @param lpfnThreadProc Address of a function that will serve as the thread procedure.

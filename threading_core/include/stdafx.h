@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 
 #ifndef OK
 #define OK		0		// Code to return to the operating system to indicate successful program termination
