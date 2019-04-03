@@ -47,6 +47,56 @@ void RegisterEvent(LPSIGNALHANDLER lpfnEventHandler) {
 	log_debug("RegisterEvent: Done.");
 }
 
+void KillThreadEx(HTHREAD hThread, int signum){
+	log_debug("In KillThreadEx");
+
+	log_info("KillThreadEx: Checking whether thread handle passed is valid...");
+
+	if (INVALID_HANDLE_VALUE == hThread) {
+		log_error("KillThreadEx: Invalid thread handle passed.  Stopping.");
+
+		log_debug("KillThreadEx: Done.");
+
+		return;
+	}
+
+	log_info("KillThreadEx: Valid thread handle passed.");
+
+	log_debug("KillThreadEx: signum = %d", signum);
+
+	log_info("KillThreadEx: Attempting to signal the thread...");
+
+	int retval = pthread_kill((pthread_t)(*hThread), signum);
+
+	log_debug("KillThreadEx: pthread_kill retval = %d", retval);
+
+	if (OK != retval) {
+		log_error("KillThreadEx: Failed to signal thread.");
+
+		log_debug("KillThreadEx: Done.");
+
+		perror("KillThreadEx");
+
+		exit(ERROR);
+	}
+
+	log_info("KillThreadEx: Thread signaled successfully.");
+
+	log_debug("KillThreadEx: Done.");
+}
+
+void KillThread(HTHREAD hThread) {
+	log_debug("In KillThread");
+
+	log_info("KillThread: Calling KillThreadEx with SIGSEGV for signum...");
+
+	KillThreadEx(hThread, SIGSEGV);
+
+	log_info("KillThread: Successfully called KillThreadEx.");
+
+	log_debug("KillThread: Done.");
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // _FreeThread: Internal function for freeing malloc'd thread handles.  This
 // function is not exposed in the header file for this library, as it is

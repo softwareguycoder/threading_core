@@ -56,6 +56,23 @@ void RegisterEventEx(int signum, LPSIGNALHANDLER lpfnEventHandler);
 void RegisterEvent(LPSIGNALHANDLER lpfnEventHandler);
 
 /**
+ * @brief Forcibly terminates a thread and raises a signal to it.
+ * @param hThread Thread handle of the thread you wish to kill.
+ * @param signum Code identifying the signal that should be sent to the thread.
+ * @remarks Causes a thread to terminate and signals the thread beforehand so that it
+ * has the opportunity to perform cleanup.
+ */
+void KillThreadEx(HTHREAD hThread, int signum);
+
+/**
+ * @brief Forcibly terminates a thread and raises a signal to it.
+ * @param hThread Thread handle of the thread you wish to kill.
+ * @remarks Causes a thread to terminate and signals the thread beforehand with the
+ * SIGSEGV signal code.
+ */
+void KillThread(HTHREAD hThread);
+
+/**
  * @brief Creates a new thread and returns a handle to it, or returns INVALID_HANDLE_VALUE if the
  * operating system was unable to create a new thread.
  * @param lpfnThreadProc Address of a function that will serve as the thread procedure.
