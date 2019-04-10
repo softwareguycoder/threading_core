@@ -68,6 +68,8 @@ void KillThreadEx(HTHREAD hThread, int signum){
 
 	int retval = pthread_kill((pthread_t)(*hThread), signum);
 
+	sleep(1); 	// force a context switch
+
 	log_debug("KillThreadEx: pthread_kill retval = %d", retval);
 
 	if (OK != retval) {
