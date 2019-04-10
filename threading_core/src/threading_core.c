@@ -3,100 +3,100 @@
 #include "threading_core.h"
 
 void RegisterEventEx(int signum, LPSIGNALHANDLER lpfnEventHandler) {
-	log_debug("In RegisterEventEx");
+	LogDebug("In RegisterEventEx");
 
-	log_info(
+	LogInfo(
 			"RegisterEventEx: Checking whether lpfnEventHandler delegate is null...");
 
 	if (NULL == lpfnEventHandler) {
-		log_error(
+		LogError(
 				"RegisterEventEx: Address of an event handler routine must be supplied.");
 
-		log_debug("RegisterEventEx: Done.");
+		LogDebug("RegisterEventEx: Done.");
 
 		exit(ERROR);
 	}
 
-	log_info("RegisterEventEx: Event handler address passed is valid.");
+	LogInfo("RegisterEventEx: Event handler address passed is valid.");
 
-	log_info("RegisterEventEx: Attempting to register the event handler...");
+	LogInfo("RegisterEventEx: Attempting to register the event handler...");
 
 	if (SIG_ERR == signal(signum, lpfnEventHandler)) {
-		log_error("RegisterEventEx: Failed to register event handler.");
+		LogError("RegisterEventEx: Failed to register event handler.");
 
 		perror("RegisterEventEx");
 
 		exit(ERROR);
 	}
 
-	log_info("RegisterEventEx: Event handler registered successfully.");
+	LogInfo("RegisterEventEx: Event handler registered successfully.");
 
-	log_debug("RegisterEventEx: Done.");
+	LogDebug("RegisterEventEx: Done.");
 }
 
 void RegisterEvent(LPSIGNALHANDLER lpfnEventHandler) {
-	log_debug("In RegisterEvent");
+	LogDebug("In RegisterEvent");
 
-	log_info(
+	LogInfo(
 			"RegisterEvent: Calling RegisterEventEx with SIGSEGV specified...");
 
 	RegisterEventEx(SIGSEGV, lpfnEventHandler);
 
-	log_info("RegisterEvent: Finished call to RegisterEventEx");
+	LogInfo("RegisterEvent: Finished call to RegisterEventEx");
 
-	log_debug("RegisterEvent: Done.");
+	LogDebug("RegisterEvent: Done.");
 }
 
 void KillThreadEx(HTHREAD hThread, int signum){
-	log_debug("In KillThreadEx");
+	LogDebug("In KillThreadEx");
 
-	log_info("KillThreadEx: Checking whether thread handle passed is valid...");
+	LogInfo("KillThreadEx: Checking whether thread handle passed is valid...");
 
 	if (INVALID_HANDLE_VALUE == hThread) {
-		log_error("KillThreadEx: Invalid thread handle passed.  Stopping.");
+		LogError("KillThreadEx: Invalid thread handle passed.  Stopping.");
 
-		log_debug("KillThreadEx: Done.");
+		LogDebug("KillThreadEx: Done.");
 
 		return;
 	}
 
-	log_info("KillThreadEx: Valid thread handle passed.");
+	LogInfo("KillThreadEx: Valid thread handle passed.");
 
-	log_debug("KillThreadEx: signum = %d", signum);
+	LogDebug("KillThreadEx: signum = %d", signum);
 
-	log_info("KillThreadEx: Attempting to signal the thread...");
+	LogInfo("KillThreadEx: Attempting to signal the thread...");
 
 	int retval = pthread_kill((pthread_t)(*hThread), signum);
 
 	sleep(1); 	// force a context switch
 
-	log_debug("KillThreadEx: pthread_kill retval = %d", retval);
+	LogDebug("KillThreadEx: pthread_kill retval = %d", retval);
 
 	if (OK != retval) {
-		log_error("KillThreadEx: Failed to signal thread.");
+		LogError("KillThreadEx: Failed to signal thread.");
 
-		log_debug("KillThreadEx: Done.");
+		LogDebug("KillThreadEx: Done.");
 
 		perror("KillThreadEx");
 
 		exit(ERROR);
 	}
 
-	log_info("KillThreadEx: Thread signaled successfully.");
+	LogInfo("KillThreadEx: Thread signaled successfully.");
 
-	log_debug("KillThreadEx: Done.");
+	LogDebug("KillThreadEx: Done.");
 }
 
 void KillThread(HTHREAD hThread) {
-	log_debug("In KillThread");
+	LogDebug("In KillThread");
 
-	log_info("KillThread: Calling KillThreadEx with SIGSEGV for signum...");
+	LogInfo("KillThread: Calling KillThreadEx with SIGSEGV for signum...");
 
 	KillThreadEx(hThread, SIGSEGV);
 
-	log_info("KillThread: Successfully called KillThreadEx.");
+	LogInfo("KillThread: Successfully called KillThreadEx.");
 
-	log_debug("KillThread: Done.");
+	LogDebug("KillThread: Done.");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -110,22 +110,22 @@ void KillThread(HTHREAD hThread) {
  * @param hThread The handle to be freed.
  */
 void _FreeThread(HTHREAD hThread) {
-	log_info("In _FreeThread");
+	LogInfo("In _FreeThread");
 
-	log_info(
+	LogInfo(
 			"_FreeThread: Checking whether the thread handle passed is valid...");
 
 	if (INVALID_HANDLE_VALUE == hThread) {
-		log_warning(
+		LogWarning(
 				"_FreeThread: The thread handle passed has an invalid value; assuming it's already been deallocated.");
 
-		log_info("_FreeThread: Done.");
+		LogInfo("_FreeThread: Done.");
 
 		// If we have an invalid handle (i.e., NULL pointer), then there is nothing to do.
 		return;
 	}
 
-	log_info(
+	LogInfo(
 			"_FreeThread: The thread handle passed is valid.  Freeing the memory...");
 
 	// The HMUTEX handle type is just a typedef of pthread_mutex_t*
@@ -137,10 +137,10 @@ void _FreeThread(HTHREAD hThread) {
 	pThread = NULL;
 	hThread = INVALID_HANDLE_VALUE;
 
-	log_info(
+	LogInfo(
 			"_FreeThread: The memory occupied by the thread handle passed has been freed.");
 
-	log_info("_FreeThread: Done.");
+	LogInfo("_FreeThread: Done.");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -173,35 +173,35 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
  */
 HTHREAD CreateThreadEx(LPTHREAD_START_ROUTINE lpfnThreadProc,
 		void* __restrict pUserState) {
-	log_info("In CreateThreadEx");
+	LogInfo("In CreateThreadEx");
 
 	/* NOTE: We can't have a thread without a thread procedure function!  If nothing has been passed
 	 * for the lpfnThreadProc parameter then that is a fatal error. */
 
-	log_info(
+	LogInfo(
 			"CreateThreadEx: Checking whether a valid thread procedure address has been passed.");
 
 	if (NULL == lpfnThreadProc) {
-		log_error(
+		LogError(
 				"CreateThreadEx: Null reference supplied for 'lpfnThreadProc' parameter.  This parameter is required.");
 
-		log_info("CreateThreadEx: Done.");
+		LogInfo("CreateThreadEx: Done.");
 
 		return INVALID_HANDLE_VALUE;
 	}
 
-	log_info(
+	LogInfo(
 			"CreateThreadEx: A valid thread procedure address has been passed.");
 
-	log_info("CreateThreadEx: Attempting to allocate memory for a new thread.");
+	LogInfo("CreateThreadEx: Attempting to allocate memory for a new thread.");
 
 	pthread_t* pNewThread = (pthread_t*) malloc(sizeof(pthread_t));
 	if (NULL == pNewThread) {
 		// Failed to allocate memory for a new thread.
-		log_error(
+		LogError(
 				"CreateThreadEx: Failed to allocate memory for a new thread handle.");
 
-		log_info("CreateThreadEx: Done.");
+		LogInfo("CreateThreadEx: Done.");
 
 		return INVALID_HANDLE_VALUE;
 	}
@@ -209,22 +209,22 @@ HTHREAD CreateThreadEx(LPTHREAD_START_ROUTINE lpfnThreadProc,
 	// If we are here, then the memory allocation succeeded.
 
 	/* NOTE: A pthread_t* and HTHREAD type are interchangeable */
-	log_info("CreateThreadEx: %d B of memory allocated.", sizeof(pthread_t));
+	LogInfo("CreateThreadEx: %d B of memory allocated.", sizeof(pthread_t));
 
 	int nResult = pthread_create(pNewThread, NULL, lpfnThreadProc, pUserState);
 	if (OK != nResult) {
-		log_error("CreateThreadEx: Failed to create thread. %s",
+		LogError("CreateThreadEx: Failed to create thread. %s",
 				strerror(nResult));
 
-		log_info("CreateThreadEx: Done.");
+		LogInfo("CreateThreadEx: Done.");
 
 		return INVALID_HANDLE_VALUE;
 	}
 
-	log_info(
+	LogInfo(
 			"CreateThreadEx: New thread successfully created and initialized.");
 
-	log_info("CreateThreadEx: Done.");
+	LogInfo("CreateThreadEx: Done.");
 
 	return (HTHREAD) pNewThread;
 }
@@ -262,75 +262,75 @@ int WaitThread(HTHREAD hThread) {
  * returns immediately.
  */
 int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
-	log_info("In WaitThreadEx");
+	LogInfo("In WaitThreadEx");
 
 	int nResult = ERROR;
 
-	log_info(
+	LogInfo(
 			"WaitThreadEx: Checking whether the thread handle passed references a valid thread...");
 
 	if (INVALID_HANDLE_VALUE == hThread) {
-		log_error(
+		LogError(
 				"WaitThreadEx: The thread handle passed to this function has an invalid value.");
 
-		log_info("WaitThreadEx: Result = %d", nResult);
+		LogInfo("WaitThreadEx: Result = %d", nResult);
 
-		log_info("WaitThreadEx: Done.");
+		LogInfo("WaitThreadEx: Done.");
 
 		return nResult;
 	}
 
-	log_info("WaitThreadEx: The thread handle passed has a valid value.");
+	LogInfo("WaitThreadEx: The thread handle passed has a valid value.");
 
 	pthread_t *pThread = (pthread_t*) hThread;
 
 	// pthread_join wants us to dereference the HTHREAD
 	if (pThread == NULL) {
-		log_error(
+		LogError(
 				"WaitThreadEx: The thread handle passed to this function has an invalid value.");
 
-		log_info("WaitThreadEx: Result = %d", nResult);
+		LogInfo("WaitThreadEx: Result = %d", nResult);
 
-		log_info("WaitThreadEx: Done.");
+		LogInfo("WaitThreadEx: Done.");
 
 		return nResult;
 	}
 
 	pthread_t nThreadID = *pThread;
 
-	log_info("WaitThreadEx: Attempting to join the specified thread...");
+	LogInfo("WaitThreadEx: Attempting to join the specified thread...");
 
 	nResult = pthread_join(nThreadID, ppRetVal);
 	if (OK != nResult) {
-		log_error("WaitThreadEx: Failed to join thread at address %x. %s",
+		LogError("WaitThreadEx: Failed to join thread at address %x. %s",
 				hThread, strerror(nResult));
 
-		log_info("WaitThreadEx: Result = %d", nResult);
+		LogInfo("WaitThreadEx: Result = %d", nResult);
 
-		log_info("WaitThreadEx: Done.");
+		LogInfo("WaitThreadEx: Done.");
 
 		return nResult;
 	}
 
-	log_info("WaitThreadEx: The specified thread has terminated.");
+	LogInfo("WaitThreadEx: The specified thread has terminated.");
 
 	// Once we get here, the thread handle is completely useless, so
 	// free the memory assocaited with it and invalidate the thread
 	// handle.  This is necessary because thread handles are allocated
 	// on the heap.
 
-	log_info(
+	LogInfo(
 			"WaitThreadEx: The thread with handle at the memory address %0x has terminated.");
 
-	log_info("WaitThreadEx: Deallocating the memory occupied by it...");
+	LogInfo("WaitThreadEx: Deallocating the memory occupied by it...");
 
 	_FreeThread(hThread);
 
-	log_info("WaitThreadEx: The terminated thread has been deallocated.");
+	LogInfo("WaitThreadEx: The terminated thread has been deallocated.");
 
-	log_info("WaitThreadEx: Result = %d", nResult);
+	LogInfo("WaitThreadEx: Result = %d", nResult);
 
-	log_info("WaitThreadEx: Done.");
+	LogInfo("WaitThreadEx: Done.");
 
 	return nResult;
 
@@ -345,35 +345,35 @@ int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
  * terminate.
  */
 int DestroyThread(HTHREAD hThread) {
-	log_info("In DestroyThread");
+	LogInfo("In DestroyThread");
 
 	int nResult = OK;
 
-	log_info(
+	LogInfo(
 			"DestroyThread: Checking whether the handle passed to us has already been invalidated...");
 
 	if (INVALID_HANDLE_VALUE == hThread) {
-		log_warning(
+		LogWarning(
 				"DestroyThread: The thread handle passed to us has already been invalidated.  Nothing more to do.");
 
-		log_info("DestroyThread: Result = %d", nResult);
+		LogInfo("DestroyThread: Result = %d", nResult);
 
-		log_info("DestroyThread: Done.");
+		LogInfo("DestroyThread: Done.");
 
 		return nResult; /* Nothing to do if thread handle is already an invalid value */
 	}
 
-	log_info(
+	LogInfo(
 			"DestroyThread: The thread handle passed to us has not been invalidated yet.");
 
-	log_info(
+	LogInfo(
 			"DestroyThread: Calling _FreeThread to release the system resources used by the thread...");
 
 	_FreeThread(hThread);
 
-	log_info("DestroyThread: Finished calling _FreeThread.");
+	LogInfo("DestroyThread: Finished calling _FreeThread.");
 
-	log_info(
+	LogInfo(
 			"DestroyThread: Setting the thread handle to an invalid value to guarantee it is released...");
 
 	/* Even though we explicitly called _FreeThread above, let's explicitly set the
@@ -381,12 +381,12 @@ int DestroyThread(HTHREAD hThread) {
 	 */
 	hThread = INVALID_HANDLE_VALUE;
 
-	log_info(
+	LogInfo(
 			"DestroyThread: The thread handle passed to us has been invalidated.");
 
-	log_info("DestroyThread: Result = %d", nResult);
+	LogInfo("DestroyThread: Result = %d", nResult);
 
-	log_info("DestroyThread: Done");
+	LogInfo("DestroyThread: Done");
 
 	return nResult;
 }
