@@ -1,13 +1,11 @@
-/*
- * interlocked_operations.h
- *
- *  Created on: Apr 11, 2019
- *      Author: bhart
- */
+// interlocked_operations.h - Defines symbols, functions, and global variables that
+// accomplish thread-safe, atomic operations such as incrementing or decrementing
+// an integer.
+//
 
-#ifndef INCLUDE_INTERLOCKED_OPERATIONS_H_
-#define INCLUDE_INTERLOCKED_OPERATIONS_H_
+#ifndef __INTERLOCKED_OPERATIONS_H__
+#define __INTERLOCKED_OPERATIONS_H__
 
 
 
-#endif /* INCLUDE_INTERLOCKED_OPERATIONS_H_ */
+#endif /* __INTERLOCKED_OPERATIONS_H__ */
