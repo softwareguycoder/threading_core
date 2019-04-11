@@ -8,23 +8,11 @@
 // meant for internal use only.
 
 void _FreeThread(HTHREAD hThread) {
-	LogInfo("In _FreeThread");
-
-	LogInfo(
-			"_FreeThread: Checking whether the thread handle passed is valid...");
-
 	if (INVALID_HANDLE_VALUE == hThread) {
-		LogWarning(
-				"_FreeThread: The thread handle passed has an invalid value; assuming it's already been deallocated.");
-
-		LogInfo("_FreeThread: Done.");
-
-		// If we have an invalid handle (i.e., NULL pointer), then there is nothing to do.
+		// If we have an invalid handle (i.e., NULL pointer),
+		// then there is nothing to do.
 		return;
 	}
-
-	LogInfo(
-			"_FreeThread: The thread handle passed is valid.  Freeing the memory...");
 
 	// The HMUTEX handle type is just a typedef of pthread_mutex_t*
 	// However, to work with the pthread functions, we need to view it
@@ -33,12 +21,8 @@ void _FreeThread(HTHREAD hThread) {
 
 	free(pThread);
 	pThread = NULL;
+
 	hThread = INVALID_HANDLE_VALUE;
-
-	LogInfo(
-			"_FreeThread: The memory occupied by the thread handle passed has been freed.");
-
-	LogInfo("_FreeThread: Done.");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
