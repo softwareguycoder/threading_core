@@ -156,14 +156,6 @@ void RegisterEventEx(int signum, LPSIGNALHANDLER lpfnEventHandler) {
 // WaitThread: Blocks the calling thread until the specified thread terminates.
 // Does not recover any user state returned by the thread waited upon.
 
-/**
- * @brief Waits for the thread specified by hThread to terminate.
- * @param hThread Handle to the thread you want to wait for.
- * @return Return code from the pthread_join function.
- * @remarks Blocks the calling thread until the thread specified by hThread
- * terminates; if the thread has already terminated when this function is called,
- * then WaitThread returns immediately.  This function relies upon WaitThreadEx.
- */
 int WaitThread(HTHREAD hThread) {
 	// delegate the implementation to the WaitThreadEx function by passing NULL
 	// for the user state variable.
