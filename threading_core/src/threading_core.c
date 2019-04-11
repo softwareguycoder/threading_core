@@ -166,17 +166,6 @@ int WaitThread(HTHREAD hThread) {
 // WaitThreadEx: Waits for a thread to terminate and also allows the calling
 // thread to have access to any user state returned from the waited-on thread.
 
-/**
- * @brief Waits for the thread specified by hThread to terminate.
- * @param hThread Handle to the thread you want to wait for.
- * @param ppRetVal Address of memory that is to be filled with the user state
- * returned by the thread procedure. NULL can also be specified if you don't care
- * to receive the returned user state.
- * @return TRUE if the thread was launched successfully; FALSE otherwise.
- * @remarks Blocks the calling thread until the thread specified by hThread terminates;
- * if the thread has already terminated when this function is called, then WaitThread
- * returns immediately.
- */
 int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 	LogInfo("In WaitThreadEx");
 
