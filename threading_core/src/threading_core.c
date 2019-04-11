@@ -167,76 +167,37 @@ int WaitThread(HTHREAD hThread) {
 // thread to have access to any user state returned from the waited-on thread.
 
 int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
-	LogInfo("In WaitThreadEx");
-
 	int nResult = ERROR;
 
-	LogInfo(
-			"WaitThreadEx: Checking whether the thread handle passed references a valid thread...");
-
 	if (INVALID_HANDLE_VALUE == hThread) {
-		LogError(
-				"WaitThreadEx: The thread handle passed to this function has an invalid value.");
-
-		LogInfo("WaitThreadEx: Result = %d", nResult);
-
-		LogInfo("WaitThreadEx: Done.");
-
-		return nResult;
+		return nResult;	// Invalid thread handle passed; nothing to do.
 	}
-
-	LogInfo("WaitThreadEx: The thread handle passed has a valid value.");
 
 	pthread_t *pThread = (pthread_t*) hThread;
 
-	// pthread_join wants us to dereference the HTHREAD
+	// pthread_join wants us to dereference the HTHREAD; we can't do this
+	// if pThread is NULL to begin with
 	if (pThread == NULL) {
-		LogError(
-				"WaitThreadEx: The thread handle passed to this function has an invalid value.");
-
-		LogInfo("WaitThreadEx: Result = %d", nResult);
-
-		LogInfo("WaitThreadEx: Done.");
-
 		return nResult;
 	}
 
+	// get the pthread_t referenced by the handle
 	pthread_t nThreadID = *pThread;
-
-	LogInfo("WaitThreadEx: Attempting to join the specified thread...");
 
 	nResult = pthread_join(nThreadID, ppRetVal);
 	if (OK != nResult) {
-		LogError("WaitThreadEx: Failed to join thread at address %x. %s",
-				hThread, strerror(nResult));
-
-		LogInfo("WaitThreadEx: Result = %d", nResult);
-
-		LogInfo("WaitThreadEx: Done.");
-
+		// Failed to join the specified thread.
 		return nResult;
 	}
-
-	LogInfo("WaitThreadEx: The specified thread has terminated.");
 
 	// Once we get here, the thread handle is completely useless, so
 	// free the memory assocaited with it and invalidate the thread
 	// handle.  This is necessary because thread handles are allocated
 	// on the heap.
-
-	LogInfo(
-			"WaitThreadEx: The thread with handle at the memory address %0x has terminated.");
-
-	LogInfo("WaitThreadEx: Deallocating the memory occupied by it...");
-
 	_FreeThread(hThread);
 
-	LogInfo("WaitThreadEx: The terminated thread has been deallocated.");
-
-	LogInfo("WaitThreadEx: Result = %d", nResult);
-
-	LogInfo("WaitThreadEx: Done.");
-
+	// Pass the result of pthread_join to the caller
 	return nResult;
 }
 
+///////////////////////////////////////////////////////////////////////////////
