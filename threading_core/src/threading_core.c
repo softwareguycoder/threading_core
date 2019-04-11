@@ -69,48 +69,20 @@ HTHREAD CreateThreadEx(LPTHREAD_START_ROUTINE lpfnThreadProc,
 // back to the operating system.
 
 int DestroyThread(HTHREAD hThread) {
-	LogInfo("In DestroyThread");
-
 	int nResult = OK;
 
-	LogInfo(
-			"DestroyThread: Checking whether the handle passed to us has already been invalidated...");
-
 	if (INVALID_HANDLE_VALUE == hThread) {
-		LogWarning(
-				"DestroyThread: The thread handle passed to us has already been invalidated.  Nothing more to do.");
-
-		LogInfo("DestroyThread: Result = %d", nResult);
-
-		LogInfo("DestroyThread: Done.");
-
-		return nResult; /* Nothing to do if thread handle is already an invalid value */
+		return nResult; /* Nothing to do if thread handle is already
+		 	 	 	 	 	 an invalid value */
 	}
 
-	LogInfo(
-			"DestroyThread: The thread handle passed to us has not been invalidated yet.");
-
-	LogInfo(
-			"DestroyThread: Calling _FreeThread to release the system resources used by the thread...");
-
+	/* Release the memory consumed by the thread handle */
 	_FreeThread(hThread);
 
-	LogInfo("DestroyThread: Finished calling _FreeThread.");
-
-	LogInfo(
-			"DestroyThread: Setting the thread handle to an invalid value to guarantee it is released...");
-
-	/* Even though we explicitly called _FreeThread above, let's explicitly set the
-	 * thread handle to INVALID_HANDLE_VALUE just to be on the safe side.
-	 */
+	/* Even though we explicitly called _FreeThread above, let's explicitly
+	 * set the thread handle to INVALID_HANDLE_VALUE just to be on the safe
+	 * side. */
 	hThread = INVALID_HANDLE_VALUE;
-
-	LogInfo(
-			"DestroyThread: The thread handle passed to us has been invalidated.");
-
-	LogInfo("DestroyThread: Result = %d", nResult);
-
-	LogInfo("DestroyThread: Done");
 
 	return nResult;
 }
