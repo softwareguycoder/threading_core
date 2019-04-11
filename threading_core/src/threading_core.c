@@ -140,35 +140,16 @@ void RegisterEvent(LPSIGNALHANDLER lpfnEventHandler) {
 // when the signal indicated by signum is signalled.
 
 void RegisterEventEx(int signum, LPSIGNALHANDLER lpfnEventHandler) {
-	LogDebug("In RegisterEventEx");
-
-	LogInfo(
-			"RegisterEventEx: Checking whether lpfnEventHandler delegate is null...");
-
 	if (NULL == lpfnEventHandler) {
-		LogError(
-				"RegisterEventEx: Address of an event handler routine must be supplied.");
-
-		LogDebug("RegisterEventEx: Done.");
-
-		exit(ERROR);
+		return;	// No event handler function handler specified; nothing to do.
 	}
 
-	LogInfo("RegisterEventEx: Event handler address passed is valid.");
-
-	LogInfo("RegisterEventEx: Attempting to register the event handler...");
-
 	if (SIG_ERR == signal(signum, lpfnEventHandler)) {
-		LogError("RegisterEventEx: Failed to register event handler.");
-
+		// Failed to register event handler
 		perror("RegisterEventEx");
 
 		exit(ERROR);
 	}
-
-	LogInfo("RegisterEventEx: Event handler registered successfully.");
-
-	LogDebug("RegisterEventEx: Done.");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
