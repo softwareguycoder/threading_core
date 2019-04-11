@@ -130,15 +130,9 @@ void KillThreadEx(HTHREAD hThread, int signum) {
 // called when the SIGSEGV signal is raised on a thread.
 
 void RegisterEvent(LPSIGNALHANDLER lpfnEventHandler) {
-	LogDebug("In RegisterEvent");
-
-	LogInfo("RegisterEvent: Calling RegisterEventEx with SIGSEGV specified...");
-
+	/* This function is just an alias for the RegisterEventEx function
+	 * with a default signum value of SIGSEGV passed. */
 	RegisterEventEx(SIGSEGV, lpfnEventHandler);
-
-	LogInfo("RegisterEvent: Finished call to RegisterEventEx");
-
-	LogDebug("RegisterEvent: Done.");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
