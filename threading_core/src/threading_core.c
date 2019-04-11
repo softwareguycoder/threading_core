@@ -166,7 +166,7 @@ int WaitThread(HTHREAD hThread) {
 // WaitThreadEx: Waits for a thread to terminate and also allows the calling
 // thread to have access to any user state returned from the waited-on thread.
 
-int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
+int WaitThreadEx(HTHREAD hThread, void **ppvRetVal) {
 	int nResult = ERROR;
 
 	if (INVALID_HANDLE_VALUE == hThread) {
@@ -184,7 +184,7 @@ int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 	// get the pthread_t referenced by the handle
 	pthread_t nThreadID = *pThread;
 
-	nResult = pthread_join(nThreadID, ppRetVal);
+	nResult = pthread_join(nThreadID, ppvRetVal);
 	if (OK != nResult) {
 		// Failed to join the specified thread.
 		return nResult;
