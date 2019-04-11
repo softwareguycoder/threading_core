@@ -87,16 +87,15 @@ int DestroyThread(HTHREAD hThread) {
 	return nResult;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// KillThread function - Signals any semaphore set up on the thread indicated
+// with the SIGSEGV signal to alert the thread that it's time to cleanup/
+// terminate. Does not release the resoruces for the thread, but, depending on
+// what the thread does in response to the signal, resources used by it may
+// be cleaned up, depending on the implementation.
+
 void KillThread(HTHREAD hThread) {
-	LogDebug("In KillThread");
-
-	LogInfo("KillThread: Calling KillThreadEx with SIGSEGV for signum...");
-
 	KillThreadEx(hThread, SIGSEGV);
-
-	LogInfo("KillThread: Successfully called KillThreadEx.");
-
-	LogDebug("KillThread: Done.");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -105,47 +104,25 @@ void KillThread(HTHREAD hThread) {
 // thread that its lifetime is at an end
 
 void KillThreadEx(HTHREAD hThread, int signum) {
-	LogDebug("In KillThreadEx");
-
-	LogInfo("KillThreadEx: Checking whether thread handle passed is valid...");
-
 	if (INVALID_HANDLE_VALUE == hThread) {
-		LogError("KillThreadEx: Invalid thread handle passed.  Stopping.");
-
-		LogDebug("KillThreadEx: Done.");
-
-		return;
+		return;	// Invalid thread handle specified; nothing to do.
 	}
-
-	LogInfo("KillThreadEx: Valid thread handle passed.");
-
-	LogDebug("KillThreadEx: signum = %d", signum);
 
 	if (signum <= 0) {
-		return;	// Invalid value for signum
+		return;	// Invalid value for signum; nothing to do.
 	}
-
-	LogInfo("KillThreadEx: Attempting to signal the thread...");
 
 	int retval = pthread_kill((pthread_t) (*hThread), signum);
 
-	sleep(1); 	// force a context switch
-
-	LogDebug("KillThreadEx: pthread_kill retval = %d", retval);
+	sleep(1); 	// force a context switch to let the thread do its thing
 
 	if (OK != retval) {
-		LogError("KillThreadEx: Failed to signal thread.");
-
-		LogDebug("KillThreadEx: Done.");
+		// Failed to kill and/or signal the thread
 
 		perror("KillThreadEx");
 
 		exit(ERROR);
 	}
-
-	LogInfo("KillThreadEx: Thread signaled successfully.");
-
-	LogDebug("KillThreadEx: Done.");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
