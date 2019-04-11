@@ -73,22 +73,31 @@ void KillThreadEx(HTHREAD hThread, int signum);
 void KillThread(HTHREAD hThread);
 
 /**
- * @brief Creates a new thread and returns a handle to it, or returns INVALID_HANDLE_VALUE if the
- * operating system was unable to create a new thread.
- * @param lpfnThreadProc Address of a function that will serve as the thread procedure.
- * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error occurred.
- * @remarks The thread procedure begins execution immediately when this function is called.
- */
-HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc);
+ * @brief Creates a thread to execute within the virtual address space of the
+ * calling process.
+ * @param lpfnThreadProc (Required.) A pointer to the application-defined
+ * function to be executed by the thread.
+ * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error
+ * occurred.
+ * @remarks The thread function specified by lpfnThreadProc will begin execution
+ * immediately.
+ * This function is an alias for CreateThreadEx with NULL passed for the second
+ * argument.
+ */HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc);
 
 /**
- * @brief Creates a new thread and returns a handle to it, or returns INVALID_HANDLE_VALUE if the
- * operating system was unable to create a new thread.
- * @param lpfnThreadProc Address of a function that will serve as the thread procedure.
- * @param pUserState Address of a block of memory that contains user state that is to be passed
+ * @brief Creates a new thread and returns a handle to it, or returns
+ * INVALID_HANDLE_VALUE if the operating system was unable to create a new
+ * thread.
+ * @param lpfnThreadProc Address of a function that will serve as the thread
+ * procedure.
+ * @param pUserState Address of a block of memory that contains user state
+ * that is to be passed
  * as an argument to the thread procedure.
- * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error occurred.
- * @remarks The thread procedure begins execution immediately when this function is called.
+ * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error
+ * occurred.
+ * @remarks The thread procedure begins execution immediately when this function
+ * is called.
  */
 HTHREAD CreateThreadEx(LPTHREAD_START_ROUTINE lpfnThreadProc, void* __restrict pUserState);
 

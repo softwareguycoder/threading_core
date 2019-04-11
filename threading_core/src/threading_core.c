@@ -2,113 +2,11 @@
 
 #include "threading_core.h"
 
-void RegisterEventEx(int signum, LPSIGNALHANDLER lpfnEventHandler) {
-	LogDebug("In RegisterEventEx");
-
-	LogInfo(
-			"RegisterEventEx: Checking whether lpfnEventHandler delegate is null...");
-
-	if (NULL == lpfnEventHandler) {
-		LogError(
-				"RegisterEventEx: Address of an event handler routine must be supplied.");
-
-		LogDebug("RegisterEventEx: Done.");
-
-		exit(ERROR);
-	}
-
-	LogInfo("RegisterEventEx: Event handler address passed is valid.");
-
-	LogInfo("RegisterEventEx: Attempting to register the event handler...");
-
-	if (SIG_ERR == signal(signum, lpfnEventHandler)) {
-		LogError("RegisterEventEx: Failed to register event handler.");
-
-		perror("RegisterEventEx");
-
-		exit(ERROR);
-	}
-
-	LogInfo("RegisterEventEx: Event handler registered successfully.");
-
-	LogDebug("RegisterEventEx: Done.");
-}
-
-void RegisterEvent(LPSIGNALHANDLER lpfnEventHandler) {
-	LogDebug("In RegisterEvent");
-
-	LogInfo(
-			"RegisterEvent: Calling RegisterEventEx with SIGSEGV specified...");
-
-	RegisterEventEx(SIGSEGV, lpfnEventHandler);
-
-	LogInfo("RegisterEvent: Finished call to RegisterEventEx");
-
-	LogDebug("RegisterEvent: Done.");
-}
-
-void KillThreadEx(HTHREAD hThread, int signum){
-	LogDebug("In KillThreadEx");
-
-	LogInfo("KillThreadEx: Checking whether thread handle passed is valid...");
-
-	if (INVALID_HANDLE_VALUE == hThread) {
-		LogError("KillThreadEx: Invalid thread handle passed.  Stopping.");
-
-		LogDebug("KillThreadEx: Done.");
-
-		return;
-	}
-
-	LogInfo("KillThreadEx: Valid thread handle passed.");
-
-	LogDebug("KillThreadEx: signum = %d", signum);
-
-	LogInfo("KillThreadEx: Attempting to signal the thread...");
-
-	int retval = pthread_kill((pthread_t)(*hThread), signum);
-
-	sleep(1); 	// force a context switch
-
-	LogDebug("KillThreadEx: pthread_kill retval = %d", retval);
-
-	if (OK != retval) {
-		LogError("KillThreadEx: Failed to signal thread.");
-
-		LogDebug("KillThreadEx: Done.");
-
-		perror("KillThreadEx");
-
-		exit(ERROR);
-	}
-
-	LogInfo("KillThreadEx: Thread signaled successfully.");
-
-	LogDebug("KillThreadEx: Done.");
-}
-
-void KillThread(HTHREAD hThread) {
-	LogDebug("In KillThread");
-
-	LogInfo("KillThread: Calling KillThreadEx with SIGSEGV for signum...");
-
-	KillThreadEx(hThread, SIGSEGV);
-
-	LogInfo("KillThread: Successfully called KillThreadEx.");
-
-	LogDebug("KillThread: Done.");
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // _FreeThread: Internal function for freeing malloc'd thread handles.  This
 // function is not exposed in the header file for this library, as it is
 // meant for internal use only.
 
-/**
- * @brief Internal (i.e., will not be put in the mutex.h header file) method
- * for freeing malloc'd thread handles.
- * @param hThread The handle to be freed.
- */
 void _FreeThread(HTHREAD hThread) {
 	LogInfo("In _FreeThread");
 
@@ -144,16 +42,9 @@ void _FreeThread(HTHREAD hThread) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// CreateThread: Requests the operating system to create a new thread in the
-// current process.  If successful, returns a handle to the new thread.
+// CreateThread function: Requests the operating system to create a new thread
+// in the current process.  If successful, returns a handle to the new thread.
 
-/**
- * @brief Creates a thread to execute within the virtual address space of the calling process.
- * @param lpfnThreadProc (Required.) A pointer to the application-defined function to be executed by the thread.
- * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error occurred.
- * @remarks The thread function specified by lpfnThreadProc will begin execution immediately.
- * This function is an alias for CreateThreadEx with NULL passed for the second argument.
- */
 HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 	return CreateThreadEx(lpfnThreadProc, NULL /* pUserState */);
 }
@@ -162,21 +53,13 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 // CreateThread: Requests the operating system to create a new thread in the
 // current process.  If successful, returns a handle to the new thread.
 
-/**
- * @brief Creates a new thread and returns a handle to it, or returns INVALID_HANDLE_VALUE if the
- * operating system was unable to create a new thread.
- * @param lpfnThreadProc Address of a function that will serve as the thread procedure.
- * @param pUserState Address of a block of memory that contains user state that is to be passed
- * as an argument to the thread procedure.  You may pass NULL for this parameter.
- * @return Handle to the created thread, or INVALID_HANDLE_VALUE if an error occurred.
- * @remarks The thread procedure begins execution immediately when this function is called.
- */
 HTHREAD CreateThreadEx(LPTHREAD_START_ROUTINE lpfnThreadProc,
 		void* __restrict pUserState) {
 	LogInfo("In CreateThreadEx");
 
-	/* NOTE: We can't have a thread without a thread procedure function!  If nothing has been passed
-	 * for the lpfnThreadProc parameter then that is a fatal error. */
+	/* NOTE: We can't have a thread without a thread procedure function!
+	 * If nothing has been passed for the lpfnThreadProc parameter then that
+	 * is a fatal error. */
 
 	LogInfo(
 			"CreateThreadEx: Checking whether a valid thread procedure address has been passed.");
@@ -221,13 +104,177 @@ HTHREAD CreateThreadEx(LPTHREAD_START_ROUTINE lpfnThreadProc,
 		return INVALID_HANDLE_VALUE;
 	}
 
-	LogInfo(
-			"CreateThreadEx: New thread successfully created and initialized.");
+	LogInfo("CreateThreadEx: New thread successfully created and initialized.");
 
 	LogInfo("CreateThreadEx: Done.");
 
 	return (HTHREAD) pNewThread;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// DestroyThread function - Releases resources consumed by the specified thread
+// back to the operating system.
+
+int DestroyThread(HTHREAD hThread) {
+	LogInfo("In DestroyThread");
+
+	int nResult = OK;
+
+	LogInfo(
+			"DestroyThread: Checking whether the handle passed to us has already been invalidated...");
+
+	if (INVALID_HANDLE_VALUE == hThread) {
+		LogWarning(
+				"DestroyThread: The thread handle passed to us has already been invalidated.  Nothing more to do.");
+
+		LogInfo("DestroyThread: Result = %d", nResult);
+
+		LogInfo("DestroyThread: Done.");
+
+		return nResult; /* Nothing to do if thread handle is already an invalid value */
+	}
+
+	LogInfo(
+			"DestroyThread: The thread handle passed to us has not been invalidated yet.");
+
+	LogInfo(
+			"DestroyThread: Calling _FreeThread to release the system resources used by the thread...");
+
+	_FreeThread(hThread);
+
+	LogInfo("DestroyThread: Finished calling _FreeThread.");
+
+	LogInfo(
+			"DestroyThread: Setting the thread handle to an invalid value to guarantee it is released...");
+
+	/* Even though we explicitly called _FreeThread above, let's explicitly set the
+	 * thread handle to INVALID_HANDLE_VALUE just to be on the safe side.
+	 */
+	hThread = INVALID_HANDLE_VALUE;
+
+	LogInfo(
+			"DestroyThread: The thread handle passed to us has been invalidated.");
+
+	LogInfo("DestroyThread: Result = %d", nResult);
+
+	LogInfo("DestroyThread: Done");
+
+	return nResult;
+}
+
+void KillThread(HTHREAD hThread) {
+	LogDebug("In KillThread");
+
+	LogInfo("KillThread: Calling KillThreadEx with SIGSEGV for signum...");
+
+	KillThreadEx(hThread, SIGSEGV);
+
+	LogInfo("KillThread: Successfully called KillThreadEx.");
+
+	LogDebug("KillThread: Done.");
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// KillThreadEx function - like KillThread, but lets you customize the signal
+// that is sent to a semaphore implemented in the thread to indicate to the
+// thread that its lifetime is at an end
+
+void KillThreadEx(HTHREAD hThread, int signum) {
+	LogDebug("In KillThreadEx");
+
+	LogInfo("KillThreadEx: Checking whether thread handle passed is valid...");
+
+	if (INVALID_HANDLE_VALUE == hThread) {
+		LogError("KillThreadEx: Invalid thread handle passed.  Stopping.");
+
+		LogDebug("KillThreadEx: Done.");
+
+		return;
+	}
+
+	LogInfo("KillThreadEx: Valid thread handle passed.");
+
+	LogDebug("KillThreadEx: signum = %d", signum);
+
+	if (signum <= 0) {
+		return;	// Invalid value for signum
+	}
+
+	LogInfo("KillThreadEx: Attempting to signal the thread...");
+
+	int retval = pthread_kill((pthread_t) (*hThread), signum);
+
+	sleep(1); 	// force a context switch
+
+	LogDebug("KillThreadEx: pthread_kill retval = %d", retval);
+
+	if (OK != retval) {
+		LogError("KillThreadEx: Failed to signal thread.");
+
+		LogDebug("KillThreadEx: Done.");
+
+		perror("KillThreadEx");
+
+		exit(ERROR);
+	}
+
+	LogInfo("KillThreadEx: Thread signaled successfully.");
+
+	LogDebug("KillThreadEx: Done.");
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// RegisterEvent function - Registers the specified semaphore function to be
+// called when the SIGSEGV signal is raised on a thread.
+
+void RegisterEvent(LPSIGNALHANDLER lpfnEventHandler) {
+	LogDebug("In RegisterEvent");
+
+	LogInfo("RegisterEvent: Calling RegisterEventEx with SIGSEGV specified...");
+
+	RegisterEventEx(SIGSEGV, lpfnEventHandler);
+
+	LogInfo("RegisterEvent: Finished call to RegisterEventEx");
+
+	LogDebug("RegisterEvent: Done.");
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// RegisterEventEx function - Registers a semaphore function to be called
+// when the signal indicated by signum is signalled.
+
+void RegisterEventEx(int signum, LPSIGNALHANDLER lpfnEventHandler) {
+	LogDebug("In RegisterEventEx");
+
+	LogInfo(
+			"RegisterEventEx: Checking whether lpfnEventHandler delegate is null...");
+
+	if (NULL == lpfnEventHandler) {
+		LogError(
+				"RegisterEventEx: Address of an event handler routine must be supplied.");
+
+		LogDebug("RegisterEventEx: Done.");
+
+		exit(ERROR);
+	}
+
+	LogInfo("RegisterEventEx: Event handler address passed is valid.");
+
+	LogInfo("RegisterEventEx: Attempting to register the event handler...");
+
+	if (SIG_ERR == signal(signum, lpfnEventHandler)) {
+		LogError("RegisterEventEx: Failed to register event handler.");
+
+		perror("RegisterEventEx");
+
+		exit(ERROR);
+	}
+
+	LogInfo("RegisterEventEx: Event handler registered successfully.");
+
+	LogDebug("RegisterEventEx: Done.");
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // WaitThread: Blocks the calling thread until the specified thread terminates.
 // Does not recover any user state returned by the thread waited upon.
@@ -331,62 +378,6 @@ int WaitThreadEx(HTHREAD hThread, void **ppRetVal) {
 	LogInfo("WaitThreadEx: Result = %d", nResult);
 
 	LogInfo("WaitThreadEx: Done.");
-
-	return nResult;
-
-}
-
-/**
- * @brief Destroys (deallocates) a thread handle and releases its resources to the operating system.
- * @param hThread Handle to the thread you want to get rid of.
- * @return System error code.  Zero if successful.
- * @remarks Only call this function if you want a guarantee that the thread will be destroyed.
- * Nominally, WaitThreadEx also releases threads once it has finished waiting for them to
- * terminate.
- */
-int DestroyThread(HTHREAD hThread) {
-	LogInfo("In DestroyThread");
-
-	int nResult = OK;
-
-	LogInfo(
-			"DestroyThread: Checking whether the handle passed to us has already been invalidated...");
-
-	if (INVALID_HANDLE_VALUE == hThread) {
-		LogWarning(
-				"DestroyThread: The thread handle passed to us has already been invalidated.  Nothing more to do.");
-
-		LogInfo("DestroyThread: Result = %d", nResult);
-
-		LogInfo("DestroyThread: Done.");
-
-		return nResult; /* Nothing to do if thread handle is already an invalid value */
-	}
-
-	LogInfo(
-			"DestroyThread: The thread handle passed to us has not been invalidated yet.");
-
-	LogInfo(
-			"DestroyThread: Calling _FreeThread to release the system resources used by the thread...");
-
-	_FreeThread(hThread);
-
-	LogInfo("DestroyThread: Finished calling _FreeThread.");
-
-	LogInfo(
-			"DestroyThread: Setting the thread handle to an invalid value to guarantee it is released...");
-
-	/* Even though we explicitly called _FreeThread above, let's explicitly set the
-	 * thread handle to INVALID_HANDLE_VALUE just to be on the safe side.
-	 */
-	hThread = INVALID_HANDLE_VALUE;
-
-	LogInfo(
-			"DestroyThread: The thread handle passed to us has been invalidated.");
-
-	LogInfo("DestroyThread: Result = %d", nResult);
-
-	LogInfo("DestroyThread: Done");
 
 	return nResult;
 }
