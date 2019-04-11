@@ -39,58 +39,27 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc) {
 
 HTHREAD CreateThreadEx(LPTHREAD_START_ROUTINE lpfnThreadProc,
 		void* __restrict pUserState) {
-	LogInfo("In CreateThreadEx");
 
 	/* NOTE: We can't have a thread without a thread procedure function!
 	 * If nothing has been passed for the lpfnThreadProc parameter then that
 	 * is a fatal error. */
 
-	LogInfo(
-			"CreateThreadEx: Checking whether a valid thread procedure address has been passed.");
-
 	if (NULL == lpfnThreadProc) {
-		LogError(
-				"CreateThreadEx: Null reference supplied for 'lpfnThreadProc' parameter.  This parameter is required.");
-
-		LogInfo("CreateThreadEx: Done.");
-
+		// Nothing to do if no thread proc passed
 		return INVALID_HANDLE_VALUE;
 	}
-
-	LogInfo(
-			"CreateThreadEx: A valid thread procedure address has been passed.");
-
-	LogInfo("CreateThreadEx: Attempting to allocate memory for a new thread.");
 
 	pthread_t* pNewThread = (pthread_t*) malloc(sizeof(pthread_t));
 	if (NULL == pNewThread) {
-		// Failed to allocate memory for a new thread.
-		LogError(
-				"CreateThreadEx: Failed to allocate memory for a new thread handle.");
-
-		LogInfo("CreateThreadEx: Done.");
-
+		// Failed to allocate memory
 		return INVALID_HANDLE_VALUE;
 	}
-
-	// If we are here, then the memory allocation succeeded.
 
 	/* NOTE: A pthread_t* and HTHREAD type are interchangeable */
-	LogInfo("CreateThreadEx: %d B of memory allocated.", sizeof(pthread_t));
-
 	int nResult = pthread_create(pNewThread, NULL, lpfnThreadProc, pUserState);
 	if (OK != nResult) {
-		LogError("CreateThreadEx: Failed to create thread. %s",
-				strerror(nResult));
-
-		LogInfo("CreateThreadEx: Done.");
-
 		return INVALID_HANDLE_VALUE;
 	}
-
-	LogInfo("CreateThreadEx: New thread successfully created and initialized.");
-
-	LogInfo("CreateThreadEx: Done.");
 
 	return (HTHREAD) pNewThread;
 }
