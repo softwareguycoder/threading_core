@@ -101,6 +101,8 @@
                                     								
                                 </option>
                                 								
+                                <option id="gnu.c.link.option.pthread.512665481" name="Support for pthread (-pthread)" superClass="gnu.c.link.option.pthread" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+                                								
                                 <inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1472780811" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
                                     									
                                     <additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -294,5 +296,7 @@
     <storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
     	
     <storageModule moduleId="refreshScope"/>
+    	
+    <storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
     
 </cproject>

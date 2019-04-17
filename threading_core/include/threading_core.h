@@ -1,6 +1,8 @@
 #ifndef __THREADING_CORE_H__
 #define __THREADING_CORE_H__
 
+#include <pthread.h>
+
 /**
  * @brief Standardized value for a handle.
  */
