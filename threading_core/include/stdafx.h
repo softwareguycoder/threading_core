@@ -7,6 +7,7 @@
 #include <signal.h>
 #include <unistd.h>  //Header file for sleep(). man 3 sleep for details.
 #include <pthread.h>
+#include <errno.h>
 
 #ifndef OK
 #define OK		0		// Code to return to the operating system to indicate successful program termination
