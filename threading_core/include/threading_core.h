@@ -16,18 +16,25 @@
 typedef pthread_t* HTHREAD;
 
 /**
- * @brief Pointer to a function that handles a signal.
+ * @brief Signature of a function that handles a signal.
  * @param signum Numeric code corresponding to the signal that was sent.
  */
 typedef void (*LPSIGNALHANDLER)(int signum);
 
 /**
- * @brief Pointer to a function that will be executed for a given thread.
+ * @brief Signature of a function that will be executed for a given thread.
  * @param lpThreadParameter A reference to memory containing user state.
  * May be NULL.
  * @returns Reference to a block of memory containing user state.  May be NULL.
  */
 typedef void* (*LPTHREAD_START_ROUTINE)(void* lpThreadParameter);
+
+/**
+ * @brief Sends a cancellation request to the specified thread.
+ * @param hThread Handle to the thread to which the cancellation request
+ * should be routed.
+ */
+void CancelThread(HTHREAD hThread);
 
 /**
  * @brief Creates a thread to execute within the virtual address space of the
@@ -58,7 +65,7 @@ HTHREAD CreateThread(LPTHREAD_START_ROUTINE lpfnThreadProc);
  * is called.
  */
 HTHREAD CreateThreadEx(LPTHREAD_START_ROUTINE lpfnThreadProc,
-		void* __restrict pUserState);
+        void* __restrict pUserState);
 
 /**
  * @brief Destroys (deallocates) a thread handle and releases its resources to
@@ -95,6 +102,23 @@ void RegisterEvent(LPSIGNALHANDLER lpfnEventHandler);
  * statement.
  */
 void RegisterEventEx(int signum, LPSIGNALHANDLER lpfnEventHandler);
+
+/**
+ * @brief Sets the calling thread's cancellation state.
+ * @param nState PTHREAD_CANCEL_ENABLE to enable cancellation; or the value
+ * PTHREAD_CANCEL_DISABLE to disable cancellation.
+ * @returns Previous cancellation state.
+ * @remarks For more, see the man page for pthread_setcancelstate.
+ */
+int SetThreadCancelState(int nState);
+
+/**
+ * @brief Sets the calling thread's cancellation type.
+ * @param nType Either PTHREAD_CANCEL_DEFERRED or PTHREAD_CANCEL_ASYNCHRONOUS.
+ * @returns Previous cancellation type.
+ * @remarks For more, see the man page for pthread_setcanceltype.
+ */
+int SetThreadCancelType(int nType);
 
 /**
  * @brief Forcibly terminates a thread and raises a signal to it.
