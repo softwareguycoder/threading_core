@@ -17,6 +17,7 @@
 #define ERROR	-1		// Code to return to the operating system to indicate an error condition
 #endif // ERROR
 
+#include <../../api_core/api_core/include/api_core.h>
 #include <../../../debug_core/debug_core/include/debug_core.h>
 
 #endif //__STDAFX_H__
