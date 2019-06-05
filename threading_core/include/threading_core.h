@@ -89,19 +89,21 @@ int DestroyThread(HTHREAD hThread);
  * statement.
  * This alias automatically maps the event handler to the SIGSEGV code.
  */
-void RegisterEvent(LPSIGNALHANDLER lpfnEventHandler);
+BOOL RegisterEvent(LPSIGNALHANDLER lpfnEventHandler);
 
 /**
  * @brief Registers a function to be called when a signal is sent to a thread.
  * @param signum Numeric value corresponding to the signal to which to respond.
  * @param lpfnEventHandler Address of a function of type LPSIGNALHANDLER that
  * should be called when the SIGSEGV signal is sent.
+ * @return TRUE if the signal handler was registered successfully; FALSE
+ * otherwise.
  * @remarks Sets the function to be called when the signal is processed by a
  * thread.
  * The handler should register itself over again during the call, as the last
  * statement.
  */
-void RegisterEventEx(int signum, LPSIGNALHANDLER lpfnEventHandler);
+BOOL RegisterEventEx(int signum, LPSIGNALHANDLER lpfnEventHandler);
 
 /**
  * @brief Sets the calling thread's cancellation state.
