@@ -3,6 +3,8 @@
 
 #include <pthread.h>
 
+#include "marshalling_functions.h"
+
 /**
  * @brief Standardized value for a handle.
  */

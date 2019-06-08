@@ -5,6 +5,7 @@
 	<projects>
 		<project>debug_core</project>
 		<project>api_core</project>
+		<project>exceptions_core</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
