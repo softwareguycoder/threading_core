@@ -6,10 +6,12 @@
 #define __MARSHALLING_FUNCTIONS_H__
 
 /**
+ * @name MarshalBlockToThread
  * @brief Called to marshal a value from the stack to the shared heap and
  * across a thread boundary.
  * @param pvData Address of the data to be marshalled.
- * @param nBlockSize Size of the data to be marshalled.
+ * @param nBlockSize Size of the data to be marshalled.  Be sure to account
+ * for the size of data types as well as array element count!
  * @return If successful, address of the data where it has been copied to the
  * global heap.
  * @remarks It's unnecessary to marshal blocks of memory that are already
@@ -22,25 +24,20 @@
  * data block, all you need to do is call free() on the pointer that this
  * function returns.
  */
-void* MarshalBlock(void* pvData, int nBlockSize);
+void* MarshalBlockToThread(void* pvData, int nBlockSize);
 
 /**
- * @brief Called to marshal an integer from the stack to the heap and
- * across a thread boundary.
- * @param value Value of the integer you want to marshal.
- * @return Address, on the heap, of the integer value to send across a
- * thread boundary.
+ * @name DeMarshalBlockFromThread
+ * @brief Called to demarshal an arbitrary data block across a thread
+ * boundary.
+ * @param pvDest Address of a value that is on the stack frame to which
+ * demarshalled data should be copied.
+ * @param pvData Address of heap storage containing the data which is
+ * to be recovered from across the thread boundary.
+ * @remarks This function should be utilized by calling threads to bring data
+ * back over from a child thread.
  */
-int* MarshalInt(int value);
-
-/**
- * @brief Called to demarshal an integer across a thread boundary.
- * @param pnValue Address of the heap storage containing the value to be
- * demarshalled.
- * @return Integer value that is recovered from over a thread boundary.
- * @remarks The DeMarshalInt function will free the memory block referenced by
- * ppnValue and set the pointer at the address specified by ppnValue to NULL.
- */
-int DeMarshalInt(int* pnValue);
+void DeMarshalBlockFromThread(void* pvDest, void* pvData,
+    int nDataSize);
 
 #endif //__MARSHALLING_FUNCTIONS_H__

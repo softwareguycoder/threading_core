@@ -11,7 +11,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Internal-use-only functions
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // Publicly-exposed functions
 
@@ -23,17 +22,17 @@
 // heap block provided will simply be duplicated, which might not be what you
 // want.
 
-void* MarshalBlock(void* pvData, int nBlockSize) {
+void* MarshalBlockToThread(void* pvData, int nBlockSize) {
   // OKAY, so we have the address of some data, and the data block is
   // supposedly on the stack frame of the caller (which obviously, the address
   // of has been placed on OUR stack frame just now by the compiler).
   //
   // So we allocate nBlockSize bytes of memory on the heap, and then
-  // we copy the value pointed to by pvData into that memory and then return
-  // the address of the newly-allocated and initialized memory block. I had
-  // thought about doing a realloc here instead of malloc; however, I do not
-  // want to try to free stack storage accidentally, nor do I want to mess
-  // with the memory the caller provided me an address to.
+  // we copy the contents of the block pointed to by pvData into that memory
+  // and then return the address of the newly-allocated and initialized memory
+  // block. I had thought about doing a realloc here instead of malloc;
+  // however, I do not want to try to free stack storage accidentally, nor do
+  // I want to mess with the memory the caller provided me an address to.
   //
 
   if (pvData == NULL) {
@@ -57,27 +56,34 @@ void* MarshalBlock(void* pvData, int nBlockSize) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// MarshalInt function
+// DeMarshalBlockFromThread function
 
-int* MarshalInt(int value) {
-  void* pvMarshalledBlock = MarshalBlock(&value, 1*sizeof(int));
-  if ( pvMarshalledBlock == NULL) {
-    return NULL;
-  }
-  int* pnResult = (int*)pvMarshalledBlock;
-  return pnResult;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// DeMarshalInt function
-
-int DeMarshalInt(int* pnValue) {
-  if (pnValue == NULL) {
-    ThrowMarshalingException(ERROR_FAILED_TO_DEMARSHAL_INT);
+void DeMarshalBlockFromThread(void* pvDest, void* pvData,
+    int nDataSize) {
+  if (pvDest == NULL) {
+    ThrowMarshalingException(ERROR_FAILED_TO_DEMARSHAL_BLOCK);
   }
 
-  int nResult = 0;
-  nResult = *pnValue; /* Retrieve the value from the heap */
-  FreeBuffer((void**) &pnValue);  /* release the heap memory referenced */
-  return nResult; /* return the value via the stack */
+  if (pvData == NULL) {
+    ThrowMarshalingException(ERROR_FAILED_TO_DEMARSHAL_BLOCK);
+  }
+
+  if (nDataSize <= 0) {
+    ThrowArgumentOutOfRangeException("nDataSize");
+  }
+
+  /* Copy the data from the heap location (which we assume is referenced
+   * by pvData) to the location referenced by pvDest (which we assume is
+   * on the local stack frame of the calling function.)  We use memmove
+   * to try and account for overlaps. */
+  memmove(pvDest, pvData, nDataSize);
+
+  /* Call free on the pvData pointer since we assume it's on the heap...
+   * but now, we no longer need access to that memory. NOTE: Since
+   * pvData was an address that was passed by value to this function,
+   * any points that the caller has to the data will be useless after
+   * this function is done executing. Callers should take care to set
+   * any externally passed value for pvData to NULL in their code after
+   * this function returns. */
+  free(pvData);
 }

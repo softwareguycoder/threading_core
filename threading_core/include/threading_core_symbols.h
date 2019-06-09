@@ -17,9 +17,14 @@
   "(did you pass a NULL pointer to MarshalBlock?).\n"
 #endif //ERROR_FAILED_TO_MARSHAL_BLOCK
 
+#ifndef ERROR_FAILED_TO_DEMARSHAL_BLOCK
+#define ERROR_FAILED_TO_DEMARSHAL_BLOCK \
+  "ERROR: Failed to demarshal data block from across thread boundary.\n"
+#endif //ERROR_FAILED_TO_DEMARSHAL_BLOCK
+
 #ifndef ERROR_FAILED_TO_DEMARSHAL_INT
 #define ERROR_FAILED_TO_DEMARSHAL_INT \
-  "ERROR: Failed to demarshal integer value across thread boundary.\n"
+  "ERROR: Failed to demarshal integer value from across thread boundary.\n"
 #endif //ERROR_FAILED_TO_DEMARSHAL_INT
 
 #ifndef ERROR_FAILED_TO_MARSHAL_INT
