@@ -13,7 +13,7 @@
 
 #ifndef ERROR_FAILED_TO_DEMARSHAL_BLOCK
 #define ERROR_FAILED_TO_DEMARSHAL_BLOCK \
-  "ERROR: Failed to demarshal data block from across thread boundary.\n"
+  "Failed to demarshal data block from across thread boundary.\n"
 #endif //ERROR_FAILED_TO_DEMARSHAL_BLOCK
 
 #ifndef ERROR_FAILED_TO_DEMARSHAL_INT
