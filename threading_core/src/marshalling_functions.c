@@ -78,7 +78,9 @@ void DeMarshalBlockFromThread(void* pvDest, void* pvData,
    * by pvData) to the location referenced by pvDest (which we assume is
    * on the local stack frame of the calling function.)  We use memmove
    * to try and account for overlaps. */
-  memmove(pvDest, pvData, nDataSize);
+  if (memmove(pvDest, pvData, nDataSize) == NULL) {
+    ThrowMarshalingException(ERROR_FAILED_TO_DEMARSHAL_BLOCK);
+  }
 
   /* Call free on the pvData pointer since we assume it's on the heap...
    * but now, we no longer need access to that memory. NOTE: Since
