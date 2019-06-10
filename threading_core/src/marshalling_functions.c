@@ -40,7 +40,7 @@ void* MarshalBlockToThread(void* pvData, int nBlockSize) {
   }
 
   if (nBlockSize <= 0) {
-    ThrowArgumentOutOfRangeException(ERROR_BLOCK_SIZE_INVALID);
+    ThrowArgumentOutOfRangeException("nBlockSize");
   }
 
   void* pvResult = malloc(nBlockSize);
@@ -63,11 +63,11 @@ void* MarshalBlockToThread(void* pvData, int nBlockSize) {
 void DeMarshalBlockFromThread(void* pvDest, void* pvData,
     int nDataSize) {
   if (pvDest == NULL) {
-    ThrowMarshalingException(ERROR_FAILED_TO_DEMARSHAL_BLOCK);
+    ThrowArgumentException("pvDest");
   }
 
   if (pvData == NULL) {
-    ThrowMarshalingException(ERROR_FAILED_TO_DEMARSHAL_BLOCK);
+    ThrowArgumentException("pvData");
   }
 
   if (nDataSize <= 0) {
