@@ -13,8 +13,8 @@
 
 #ifndef ERROR_FAILED_TO_MARSHAL_BLOCK
 #define ERROR_FAILED_TO_MARSHAL_BLOCK \
-  "ERROR: Failed to marshal memory block onto the heap\n" \
-  "(did you pass a NULL pointer to MarshalBlock?).\n"
+  "Failed to marshal memory block onto the heap\n" \
+  "\t(did you pass a NULL pointer to MarshalBlock?).\n"
 #endif //ERROR_FAILED_TO_MARSHAL_BLOCK
 
 #ifndef ERROR_FAILED_TO_DEMARSHAL_BLOCK
