@@ -16,11 +16,6 @@
   "Failed to demarshal data block from across thread boundary.\n"
 #endif //ERROR_FAILED_TO_DEMARSHAL_BLOCK
 
-#ifndef ERROR_FAILED_TO_MARSHAL_INT
-#define ERROR_FAILED_TO_MARSHAL_INT \
-  "ERROR: Failed to marshal integer value across thread boundary.\n"
-#endif //ERROR_FAILED_TO_MARSHAL_INT
-
 /**
  * @brief Error message that is written to STDERR when a thread cancellation
  * state cannot be set.
