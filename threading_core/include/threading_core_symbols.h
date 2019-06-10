@@ -5,12 +5,6 @@
 #ifndef __THREADING_CORE_SYMBOLS_H__
 #define __THREADING_CORE_SYMBOLS_H__
 
-#ifndef ERROR_BLOCK_SIZE_INVALID
-#define ERROR_BLOCK_SIZE_INVALID \
-   "ERROR: A positive integer value must be passed for nBlockSize " \
-   "in MarshalBlock.\n"
-#endif //ERROR_BLOCK_SIZE_INVALID
-
 #ifndef ERROR_FAILED_TO_MARSHAL_BLOCK
 #define ERROR_FAILED_TO_MARSHAL_BLOCK \
   "Failed to marshal memory block onto the heap\n" \
