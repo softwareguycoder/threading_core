@@ -7,6 +7,9 @@
 
 /**
  * @brief Standardized value for a handle.
+ * @remarks This symbol is defined here instead of in the standard header
+ * file threading_core_symbols.h since calling applications should have
+ * access to this symbol.
  */
 #ifndef INVALID_HANDLE_VALUE
 #define INVALID_HANDLE_VALUE NULL
