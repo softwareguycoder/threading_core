@@ -36,7 +36,7 @@ void* MarshalBlockToThread(void* pvData, int nBlockSize) {
   //
 
   if (pvData == NULL) {
-    ThrowMarshalingException(ERROR_FAILED_TO_MARSHAL_BLOCK);
+    ThrowArgumentException("pvData");
   }
 
   if (nBlockSize <= 0) {
@@ -50,7 +50,9 @@ void* MarshalBlockToThread(void* pvData, int nBlockSize) {
 
   /* Transfer the data values from the source block to the
    * newly-allocated block.  Use memmove just in case. */
-  memmove(pvResult, pvData, nBlockSize);
+  if (memmove(pvResult, pvData, nBlockSize) == NULL) {
+    ThrowMarshalingException(ERROR_FAILED_TO_MARSHAL_BLOCK);
+  }
 
   return pvResult;
 }
